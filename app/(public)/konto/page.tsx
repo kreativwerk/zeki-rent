@@ -85,7 +85,7 @@ export default async function AccountPage() {
         </dl>
         <p className="fine-print">
           Sie können jederzeit Auskunft, Berichtigung oder Löschung Ihrer
-          Daten verlangen — eine kurze E-Mail an{" "}
+          Daten verlangen. Eine kurze E-Mail an{" "}
           <a href="mailto:koray.zeki@zeki-rent.com">
             koray.zeki@zeki-rent.com
           </a>{" "}

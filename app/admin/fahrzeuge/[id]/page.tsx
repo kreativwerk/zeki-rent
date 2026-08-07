@@ -42,7 +42,7 @@ export default async function EditVehiclePage(props: {
         <h2>Verplanung</h2>
         {planned.length === 0 ? (
           <p className="empty-state">
-            Keine offenen oder bestätigten Buchungen — das Fahrzeug ist frei.
+            Keine offenen oder bestätigten Buchungen. Das Fahrzeug ist frei.
           </p>
         ) : (
           <table className="data-table">

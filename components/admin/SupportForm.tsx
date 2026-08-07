@@ -40,7 +40,7 @@ export default function SupportForm() {
     <form onSubmit={submit} className="card">
       <h2>Neues Ticket</h2>
       <p className="step-intro">
-        Beschreiben Sie Ihr Anliegen — Änderungswunsch, Fehler oder Frage. Die
+        Beschreiben Sie Ihr Anliegen: Änderungswunsch, Fehler oder Frage. Die
         Tickets werden automatisiert bearbeitet.
       </p>
       <div className="field">
@@ -72,7 +72,7 @@ export default function SupportForm() {
       {error && <p className="error-text">{error}</p>}
       {sent && (
         <p className="success-text">
-          Ticket erstellt ✓ — es erscheint unten in der Liste.
+          Ticket erstellt. Es erscheint unten in der Liste.
         </p>
       )}
       <button type="submit" className="btn-primary" disabled={submitting}>

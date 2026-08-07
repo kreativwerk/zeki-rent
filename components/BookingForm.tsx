@@ -33,7 +33,7 @@ export default function BookingForm({
     return (
       <div className="booking-login-hint">
         <p>
-          Zum Buchen benötigen Sie ein Kundenkonto — so können Sie Ihre
+          Zum Buchen benötigen Sie ein Kundenkonto. So können Sie Ihre
           Anfragen jederzeit einsehen.
         </p>
         <Link
@@ -177,7 +177,7 @@ export default function BookingForm({
         {submitting ? "Wird gesendet …" : "Unverbindlich anfragen"}
       </button>
       <p className="fine-print">
-        Die Anfrage ist unverbindlich — der Mietvertrag kommt erst nach unserer
+        Die Anfrage ist unverbindlich. Der Mietvertrag kommt erst nach unserer
         Bestätigung zustande.
       </p>
     </form>

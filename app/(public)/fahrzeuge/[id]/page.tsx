@@ -61,8 +61,8 @@ export default async function VehiclePage(props: {
             </tbody>
           </table>
           <p className="fine-print">
-            Zzgl. Kilometerpaket · Kaution 1.000 € · Vollkasko mit 1.000 €
-            Selbstbeteiligung
+            Zzgl. Kilometerpaket. Kaution 1.000 €, Vollkasko mit 1.000 €
+            Selbstbeteiligung inklusive.
           </p>
         </div>
 

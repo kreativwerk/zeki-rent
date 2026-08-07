@@ -63,7 +63,7 @@ export function LoginForm({ next }: { next: string }) {
         {submitting ? "Wird angemeldet …" : "Anmelden"}
       </button>
       <p className="auth-switch">
-        Noch kein Konto?{" "}
+        Noch kein Konto bei uns?{" "}
         <Link href={`/registrieren?next=${encodeURIComponent(next)}`}>
           Jetzt registrieren
         </Link>
