@@ -1,12 +1,17 @@
 :root {
-  --bg: #f4f6f9;
+  /* iOS system grouped palette */
+  --bg: #f2f2f7;
   --card: #ffffff;
-  --text: #1a2233;
-  --muted: #5c6779;
+  --text: #1c1c1e;
+  --muted: rgba(60, 60, 67, 0.6);
+  --separator: rgba(60, 60, 67, 0.12);
+  --fill: rgba(118, 118, 128, 0.08);
+  --fill-pressed: rgba(118, 118, 128, 0.16);
   --accent: #ff6b00;
-  --accent-dark: #e05e00;
-  --border: #dfe4ec;
-  --error: #d43d3d;
+  --accent-pressed: #e05e00;
+  --accent-tint: rgba(255, 107, 0, 0.1);
+  --error: #ff3b30;
+  --radius: 12px;
 }
 
 * {
@@ -19,109 +24,164 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  line-height: 1.5;
+  /* System font first — it ships optical sizing and tracking tables */
+  font: 100%/1.5 -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .container {
-  max-width: 720px;
+  max-width: 42rem;
   margin: 0 auto;
-  padding: 24px 16px 64px;
+  padding: 0 1rem 4rem;
 }
 
-.header {
-  text-align: center;
-  padding: 24px 0 8px;
+/* Translucent chrome — content scrolls underneath */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(242, 242, 247, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-.header .logo {
-  display: inline-block;
-  background: var(--text);
-  color: #fff;
+/* Scroll edge effect instead of a hard divider */
+.topbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.75rem;
+  height: 0.75rem;
+  pointer-events: none;
+  background: linear-gradient(rgba(28, 28, 30, 0.05), transparent);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .topbar {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .topbar {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid var(--text);
+  }
+}
+
+.topbar-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
   font-weight: 800;
-  font-size: 22px;
-  letter-spacing: 0.5px;
-  padding: 8px 18px;
-  border-radius: 10px;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
-.header .logo span {
+.logo span {
   color: var(--accent);
 }
 
-.header h1 {
-  font-size: 24px;
-  margin: 18px 0 6px;
-}
-
-.header p {
-  color: var(--muted);
-  margin: 0 auto;
-  max-width: 540px;
-}
-
-.progress {
-  margin: 24px 0 16px;
-}
-
 .progress-bar {
-  height: 8px;
-  background: var(--border);
+  flex: 1;
+  height: 0.25rem;
+  background: var(--fill);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
+  width: 100%;
   background: var(--accent);
   border-radius: 999px;
-  transition: width 0.3s ease;
+  transform-origin: left center;
 }
 
 .progress-label {
-  font-size: 13px;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
   color: var(--muted);
-  margin-top: 6px;
-  text-align: right;
+  white-space: nowrap;
+}
+
+.header {
+  text-align: center;
+  padding: 2rem 0 0.5rem;
+}
+
+.header h1 {
+  /* Large text: tight leading, negative tracking */
+  font-size: clamp(1.5rem, 4.5vw, 1.9rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.header p {
+  color: var(--muted);
+  margin: 0 auto;
+  max-width: 34rem;
+  font-size: 0.9375rem;
 }
 
 .card {
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 28px 24px;
-  box-shadow: 0 2px 10px rgba(20, 30, 50, 0.05);
+  border-radius: 1rem;
+  padding: 1.75rem 1.5rem;
+  margin-top: 1.25rem;
+  box-shadow: 0 1px 2px rgba(28, 28, 30, 0.04), 0 8px 24px rgba(28, 28, 30, 0.06);
+  overflow: hidden;
 }
 
 .card h2 {
-  margin: 0 0 4px;
-  font-size: 20px;
+  margin: 0 0 0.25rem;
+  font-size: 1.3125rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-weight: 700;
 }
 
 .card .step-intro {
   color: var(--muted);
-  font-size: 14px;
-  margin: 0 0 20px;
+  font-size: 0.9375rem;
+  margin: 0 0 1.5rem;
 }
 
 .field {
-  margin-bottom: 20px;
+  margin-bottom: 1.375rem;
 }
 
 .field label.field-label {
   display: block;
   font-weight: 600;
-  font-size: 15px;
-  margin-bottom: 6px;
+  font-size: 0.9375rem;
+  letter-spacing: -0.005em;
+  margin-bottom: 0.4rem;
 }
 
 .field .hint {
   font-weight: 400;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.8125rem;
   display: block;
-  margin-top: 2px;
+  margin-top: 0.125rem;
 }
 
 .required-star {
@@ -134,82 +194,130 @@ input[type="tel"],
 textarea,
 select {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 15px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--separator);
+  border-radius: 0.625rem;
+  /* ≥16px so iOS doesn't zoom on focus */
+  font-size: 1.0625rem;
   font-family: inherit;
   background: #fff;
   color: var(--text);
+  transition: border-color 100ms ease-out, box-shadow 100ms ease-out;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 0;
+  outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
 }
 
 textarea {
-  min-height: 90px;
+  min-height: 5.5rem;
   resize: vertical;
 }
 
+::placeholder {
+  color: rgba(60, 60, 67, 0.35);
+}
+
+/* Inset grouped list, iOS style */
 .options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  border-radius: var(--radius);
+  background: var(--fill);
+  overflow: hidden;
 }
 
 .option {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.875rem;
   cursor: pointer;
-  font-size: 15px;
-  background: #fff;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  font-size: 1rem;
+  line-height: 1.35;
+  position: relative;
+  /* Instant press feedback — response lives on pointer-down */
+  transition: background 100ms ease-out;
 }
 
-.option:hover {
-  border-color: var(--accent);
+.option + .option::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0.875rem;
+  right: 0;
+  height: 1px;
+  background: var(--separator);
+  transform: scaleY(0.5);
+  transform-origin: top;
+}
+
+.option:active {
+  background: var(--fill-pressed);
 }
 
 .option.selected {
-  border-color: var(--accent);
-  background: #fff7f0;
+  background: var(--accent-tint);
 }
 
+.option.selected:active {
+  background: rgba(255, 107, 0, 0.18);
+}
+
+/* Keep the native input for a11y, hide it visually */
 .option input {
-  margin-top: 3px;
-  accent-color: var(--accent);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.option:has(input:focus-visible) {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.option .option-text {
+  flex: 1;
+}
+
+.option .check {
+  width: 1.375rem;
+  height: 1.375rem;
+  flex: none;
+  color: var(--accent);
 }
 
 .error-text {
   color: var(--error);
-  font-size: 13px;
-  margin-top: 6px;
+  font-size: 0.8125rem;
+  margin-top: 0.4rem;
 }
 
 .nav {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  margin-top: 28px;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
 }
 
 button {
   font-family: inherit;
-  font-size: 15px;
+  font-size: 1.0625rem;
   font-weight: 600;
-  border-radius: 8px;
-  padding: 12px 22px;
+  letter-spacing: -0.01em;
+  border-radius: var(--radius);
+  padding: 0.75rem 1.375rem;
   cursor: pointer;
   border: none;
+  transition: transform 100ms ease-out, background 100ms ease-out;
+}
+
+/* Feedback on press, and it's instant */
+button:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
@@ -217,56 +325,74 @@ button {
   color: #fff;
 }
 
-.btn-primary:hover {
-  background: var(--accent-dark);
+.btn-primary:active {
+  background: var(--accent-pressed);
 }
 
 .btn-primary:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
+  background: var(--fill);
+  color: var(--text);
 }
 
-.btn-secondary:hover {
-  color: var(--text);
+.btn-secondary:active {
+  background: var(--fill-pressed);
 }
 
 .success {
   text-align: center;
-  padding: 48px 24px;
+  padding: 3rem 1.5rem;
 }
 
-.success .check {
-  width: 64px;
-  height: 64px;
+.success .check-badge {
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
-  background: #e7f7ec;
-  color: #1f9d55;
-  font-size: 34px;
-  line-height: 64px;
-  margin: 0 auto 16px;
+  background: var(--accent-tint);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.success h2 {
+  letter-spacing: -0.015em;
+}
+
+.success p {
+  color: var(--muted);
+  max-width: 26rem;
+  margin: 0.5rem auto 0;
 }
 
 .footer {
   text-align: center;
   color: var(--muted);
-  font-size: 13px;
-  margin-top: 32px;
+  font-size: 0.8125rem;
+  margin-top: 2rem;
 }
 
 @media (max-width: 480px) {
   .card {
-    padding: 20px 16px;
+    padding: 1.25rem 1rem;
   }
   .nav {
     flex-direction: column-reverse;
   }
   .nav button {
     width: 100%;
+  }
+}
+
+/* Reduced motion: gentle cross-fades instead of slides/springs */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
   }
 }
