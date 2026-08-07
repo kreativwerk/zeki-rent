@@ -194,6 +194,8 @@ body {
 input[type="text"],
 input[type="email"],
 input[type="tel"],
+input[type="password"],
+input[type="date"],
 textarea,
 select {
   width: 100%;
@@ -402,4 +404,843 @@ button:active {
   * {
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ---------- Public site ---------- */
+
+.site-nav {
+  gap: 1.5rem;
+}
+
+.site-nav .logo {
+  text-decoration: none;
+  color: var(--text);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-admin-link {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-small {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.625rem;
+  text-decoration: none;
+  transition: transform 100ms ease-out;
+}
+
+.btn-small:active {
+  transform: scale(0.97);
+}
+
+.btn-link {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: var(--radius);
+  padding: 0.75rem 1.375rem;
+  transition: transform 100ms ease-out, background 100ms ease-out;
+}
+
+.btn-link:active {
+  transform: scale(0.97);
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.btn-danger {
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--error);
+}
+
+.btn-danger:active {
+  background: rgba(255, 59, 48, 0.2);
+}
+
+main {
+  min-height: 60vh;
+}
+
+.hero {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 4.5rem 1rem 3rem;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+  margin: 0 0 1rem;
+}
+
+.hero > p {
+  color: var(--muted);
+  font-size: 1.125rem;
+  max-width: 34rem;
+  margin: 0 auto 1.5rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.usp-row {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  padding: 0;
+  margin: 2rem 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.usp-row li::before {
+  content: "✓ ";
+  color: var(--text);
+  font-weight: 700;
+}
+
+.section {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.section > h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+.section-intro {
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
+
+.section-alt {
+  max-width: none;
+  background: #fff;
+}
+
+.section-alt > * {
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.vehicle-card {
+  background: var(--card);
+  border-radius: 1rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(28, 28, 30, 0.04), 0 8px 24px rgba(28, 28, 30, 0.06);
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(28, 28, 30, 0.05), 0 12px 32px rgba(28, 28, 30, 0.1);
+}
+
+.vehicle-card:active {
+  transform: scale(0.99);
+}
+
+.vehicle-card img,
+.vehicle-placeholder {
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e8eaf0, #f4f5f8);
+  color: rgba(60, 60, 67, 0.35);
+}
+
+.vehicle-card-body {
+  padding: 1rem 1.125rem 1.25rem;
+}
+
+.vehicle-category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.vehicle-card-body h3 {
+  margin: 0.25rem 0 0.25rem;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+}
+
+.vehicle-specs {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0 0 0.75rem;
+}
+
+.vehicle-price {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.vehicle-price strong {
+  font-size: 1.125rem;
+}
+
+.steps {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 1.5rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.25rem;
+}
+
+.steps li {
+  counter-increment: step;
+  background: var(--bg);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.steps li::before {
+  content: counter(step);
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  line-height: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.steps li strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
+}
+
+.terms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.terms-grid > div {
+  background: var(--card);
+  border-radius: 0.875rem;
+  padding: 1rem 1.125rem;
+}
+
+.terms-grid strong {
+  letter-spacing: -0.01em;
+}
+
+.terms-grid p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.cta-band {
+  text-align: center;
+  padding-bottom: 4.5rem;
+}
+
+.cta-band p {
+  color: var(--muted);
+  margin: 0.25rem 0 1.25rem;
+}
+
+.site-footer {
+  background: var(--text);
+  color: rgba(255, 255, 255, 0.65);
+  padding: 3rem 1rem 1.5rem;
+}
+
+.site-footer-inner {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 2rem;
+}
+
+.site-footer .logo {
+  color: #fff;
+}
+
+.site-footer .logo span {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.site-footer h3 {
+  color: #fff;
+  font-size: 0.9375rem;
+  margin: 0 0 0.5rem;
+}
+
+.site-footer p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.site-footer a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: #fff;
+}
+
+.site-footer-note {
+  max-width: 64rem;
+  margin: 2rem auto 0;
+  font-size: 0.8125rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 1.25rem;
+}
+
+/* ---------- Detail & booking ---------- */
+
+.page-narrow {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.back-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.vehicle-detail {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 720px) {
+  .vehicle-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vehicle-detail h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  letter-spacing: -0.02em;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.vehicle-detail h2 {
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.spec-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: var(--muted);
+}
+
+.spec-list li::before {
+  content: "✓ ";
+  color: var(--text);
+  font-weight: 700;
+}
+
+.vehicle-notes {
+  color: var(--muted);
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.price-table td {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--separator);
+  font-size: 0.9375rem;
+}
+
+.price-table td:last-child {
+  text-align: right;
+}
+
+.fine-print {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  margin-top: 0.75rem;
+}
+
+.booking-panel {
+  background: var(--card);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  align-self: start;
+  box-shadow: 0 1px 2px rgba(28, 28, 30, 0.04), 0 8px 24px rgba(28, 28, 30, 0.06);
+}
+
+.booking-panel h2 {
+  margin: 0 0 1rem !important;
+}
+
+.duration-pills {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+  gap: 0.5rem;
+}
+
+.pill {
+  border: 1px solid var(--separator);
+  background: #fff;
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.pill span {
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.pill-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.pill-active span {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.booking-total {
+  font-size: 0.9375rem;
+}
+
+.booking-total span {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.booking-login-hint p {
+  color: var(--muted);
+  margin-top: 0;
+}
+
+.booking-success h3 {
+  margin: 0 0 0.5rem;
+}
+
+.booking-success p {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ---------- Auth & account ---------- */
+
+.auth-page {
+  max-width: 28rem;
+}
+
+.auth-page h1 {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+}
+
+.auth-switch {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  margin: 1rem 0 0;
+}
+
+.consent-row {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.consent-row input {
+  margin-top: 0.2rem;
+  accent-color: var(--accent);
+}
+
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.account-header h1 {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.data-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.4rem 1.5rem;
+  margin: 0;
+}
+
+.data-list dt {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.data-list dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ---------- Tables & status ---------- */
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0 0.75rem 0.5rem 0;
+  border-bottom: 1px solid var(--separator);
+}
+
+.data-table td {
+  padding: 0.75rem 0.75rem 0.75rem 0;
+  border-bottom: 1px solid var(--separator);
+  vertical-align: top;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.note-cell {
+  max-width: 14rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.status {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--fill);
+}
+
+.status-neu {
+  background: rgba(0, 122, 255, 0.12);
+  color: #0a66c2;
+}
+
+.status-bestätigt {
+  background: var(--success-tint);
+  color: #1f8a3d;
+}
+
+.status-abgelehnt {
+  background: rgba(255, 59, 48, 0.12);
+  color: var(--error);
+}
+
+.status-beendet {
+  background: var(--fill);
+  color: var(--muted);
+}
+
+.status-select {
+  border: 1px solid var(--separator);
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: #fff;
+}
+
+.empty-state {
+  color: var(--muted);
+  margin: 0.5rem 0;
+}
+
+.table-card {
+  overflow-x: auto;
+}
+
+/* ---------- Admin shell ---------- */
+
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 15rem;
+  flex: none;
+  background: var(--text);
+  color: #fff;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.admin-sidebar .logo {
+  color: #fff;
+  text-decoration: none;
+  padding: 0 0.5rem;
+}
+
+.admin-sidebar .logo span {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.admin-nav a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.625rem;
+  transition: background 100ms ease-out, color 100ms ease-out;
+}
+
+.admin-nav a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-nav a.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.admin-sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.admin-sidebar-footer a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.admin-sidebar-footer .btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 2rem;
+  min-width: 0;
+}
+
+.admin-content .card {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+}
+
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.admin-page-header h1 {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.admin-page-header p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 560px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.price-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+.price-input span {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+
+@media (max-width: 760px) {
+  .admin-shell {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: auto;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+  .admin-nav {
+    flex-direction: row;
+  }
+  .admin-sidebar-footer {
+    flex-direction: row;
+    align-items: center;
+  }
+  .admin-content {
+    padding: 1.25rem 1rem;
+  }
+}
+
+/* ---------- Legal ---------- */
+
+.legal-page {
+  max-width: 44rem;
+}
+
+.legal-page h1 {
+  letter-spacing: -0.02em;
+}
+
+.legal-page h2 {
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
+}
+
+.legal-page p,
+.legal-page li {
+  color: rgba(28, 28, 30, 0.8);
+  font-size: 0.9375rem;
 }

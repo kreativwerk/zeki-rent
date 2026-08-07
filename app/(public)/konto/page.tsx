@@ -1,0 +1,98 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { formatDate, type Booking, type Profile } from "@/lib/types";
+import { LogoutButton } from "@/components/AuthForms";
+
+export const metadata = { title: "Mein Konto – Zeki Rent" };
+
+export default async function AccountPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/konto");
+
+  const [{ data: profile }, { data: bookings }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    supabase
+      .from("bookings")
+      .select("*, vehicles(name)")
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const p = profile as Profile | null;
+  const list = (bookings ?? []) as Booking[];
+
+  return (
+    <div className="page-narrow">
+      <div className="account-header">
+        <h1>Mein Konto</h1>
+        <LogoutButton />
+      </div>
+
+      <div className="card">
+        <h2>Meine Anfragen</h2>
+        {list.length === 0 ? (
+          <p className="empty-state">
+            Noch keine Anfragen.{" "}
+            <Link href="/#fahrzeuge">Jetzt Fahrzeug auswählen →</Link>
+          </p>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Fahrzeug</th>
+                <th>Start</th>
+                <th>Laufzeit</th>
+                <th>Kilometer</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((b) => (
+                <tr key={b.id}>
+                  <td>{b.vehicles?.name ?? "–"}</td>
+                  <td>{formatDate(b.start_date)}</td>
+                  <td>
+                    {b.duration_months}{" "}
+                    {b.duration_months === 1 ? "Monat" : "Monate"}
+                  </td>
+                  <td>{b.km_package}</td>
+                  <td>
+                    <span className={`status status-${b.status}`}>
+                      {b.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="card">
+        <h2>Meine Daten</h2>
+        <dl className="data-list">
+          <dt>Name</dt>
+          <dd>{p?.name ?? "–"}</dd>
+          <dt>E-Mail</dt>
+          <dd>{p?.email ?? user.email}</dd>
+          <dt>Telefon</dt>
+          <dd>{p?.phone ?? "–"}</dd>
+          <dt>Einwilligung erteilt</dt>
+          <dd>{p?.consent_at ? formatDate(p.consent_at) : "–"}</dd>
+        </dl>
+        <p className="fine-print">
+          Sie können jederzeit Auskunft, Berichtigung oder Löschung Ihrer
+          Daten verlangen — eine kurze E-Mail an{" "}
+          <a href="mailto:koray.zeki@zeki-rent.com">
+            koray.zeki@zeki-rent.com
+          </a>{" "}
+          genügt. Details in der{" "}
+          <Link href="/datenschutz">Datenschutzerklärung</Link>.
+        </p>
+      </div>
+    </div>
+  );
+}
