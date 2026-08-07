@@ -34,8 +34,12 @@ export async function POST(request: Request) {
   // Fallback that always works: submission lands in the Vercel function logs.
   console.log("Neue Fragebogen-Einsendung", body.submittedAt ?? "", "\n" + summary);
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+  // Publishable defaults — safe to ship, RLS only allows inserts with this key
+  const supabaseUrl =
+    process.env.SUPABASE_URL ?? "https://riqrpvmmesqnrjcntmtt.supabase.co";
+  const supabaseKey =
+    process.env.SUPABASE_PUBLISHABLE_KEY ??
+    "sb_publishable_K9Hav9z5EI9_6XvMsamnDg_JxVTxcst";
   if (supabaseUrl && supabaseKey) {
     const res = await fetch(`${supabaseUrl}/rest/v1/zeki_rent_submissions`, {
       method: "POST",
