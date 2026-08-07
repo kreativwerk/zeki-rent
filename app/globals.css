@@ -14,7 +14,9 @@
   --success: #34c759;
   --success-tint: rgba(52, 199, 89, 0.14);
   --error: #ff3b30;
-  --radius: 12px;
+  /* Shape system: buttons are full-pill, cards stay 16px */
+  --radius: 999px;
+  --radius-card: 1rem;
 }
 
 * {
@@ -229,7 +231,7 @@ textarea {
 
 /* Inset grouped list, iOS style */
 .options {
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   background: var(--fill);
   overflow: hidden;
 }
@@ -1799,4 +1801,72 @@ a.fleet-tile:hover {
   margin: 0;
   color: var(--muted);
   font-size: 0.9375rem;
+}
+
+/* ---------- Pill buttons + manifesto hero + mobile pass ---------- */
+
+.btn-small {
+  border-radius: 999px;
+}
+
+.pill {
+  border-radius: 999px;
+}
+
+.hero-manifesto {
+  grid-template-columns: 1fr;
+  padding-top: 3rem;
+  padding-bottom: 3.5rem;
+}
+
+.hero-manifesto .hero-split-copy h1 {
+  font-size: clamp(2.6rem, 7.5vw, 4.75rem);
+}
+
+.hero-manifesto .hero-split-copy p {
+  max-width: 30rem;
+}
+
+.hero-split .hero-watermark {
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  left: 50%;
+}
+
+/* Mobile navigation: logo + actions only, one line */
+@media (max-width: 680px) {
+  .nav-links {
+    display: none;
+  }
+  .topbar-inner {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-manifesto {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-actions .btn-link {
+    width: 100%;
+  }
+  .section {
+    padding: 2.25rem 1rem;
+  }
+  .fleet-tile-body {
+    padding: 1rem 1.125rem 1.25rem;
+  }
+  .how-split {
+    gap: 1.5rem;
+  }
+}
+
+.hero-manifesto .hero-actions {
+  justify-content: flex-start;
 }

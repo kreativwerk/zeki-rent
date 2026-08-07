@@ -18,7 +18,6 @@ async function getVehicles(): Promise<Vehicle[]> {
 
 export default async function Home() {
   const vehicles = await getVehicles();
-  const hero = vehicles[0] ?? null;
 
   return (
     <>
@@ -26,16 +25,18 @@ export default async function Home() {
         <span className="hero-watermark" aria-hidden>
           ZEKI
         </span>
-        <div className="hero-split-inner">
+        <div className="hero-split-inner hero-manifesto">
           <div className="hero-split-copy">
             <h1>
-              Transporter mieten.
+              Langzeitmiete.
               <br />
-              <span>Monatlich.</span>
+              Unkompliziert.
+              <br />
+              <span>Fair.</span>
             </h1>
             <p>
-              Langzeitmiete ab einem Monat mit fairen Staffelpreisen und
-              Übergabe rund um die Uhr.
+              Transporter ab einem Monat mieten, mit Übergabe rund um die Uhr
+              und Lieferung auf Wunsch.
             </p>
             <div className="hero-actions">
               <Link href="/#fahrzeuge" className="btn-primary btn-link">
@@ -45,13 +46,6 @@ export default async function Home() {
                 0163 9574116
               </a>
             </div>
-          </div>
-          <div className="hero-split-media">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={hero?.photo_url ?? "/fahrzeuge/crafter.png"}
-              alt={hero?.name ?? "VW Crafter, weiß"}
-            />
           </div>
         </div>
       </section>
