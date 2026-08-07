@@ -7,9 +7,12 @@
   --separator: rgba(60, 60, 67, 0.12);
   --fill: rgba(118, 118, 128, 0.08);
   --fill-pressed: rgba(118, 118, 128, 0.16);
-  --accent: #ff6b00;
-  --accent-pressed: #e05e00;
-  --accent-tint: rgba(255, 107, 0, 0.1);
+  --accent: #1c1c1e;
+  --accent-pressed: #000000;
+  --accent-tint: rgba(28, 28, 30, 0.07);
+  --focus-ring: rgba(28, 28, 30, 0.18);
+  --success: #34c759;
+  --success-tint: rgba(52, 199, 89, 0.14);
   --error: #ff3b30;
   --radius: 12px;
 }
@@ -94,7 +97,7 @@ body {
 }
 
 .logo span {
-  color: var(--accent);
+  color: var(--muted);
 }
 
 .progress-bar {
@@ -185,7 +188,7 @@ body {
 }
 
 .required-star {
-  color: var(--accent);
+  color: var(--muted);
 }
 
 input[type="text"],
@@ -210,7 +213,7 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-tint);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 textarea {
@@ -259,11 +262,15 @@ textarea {
 }
 
 .option.selected {
-  background: var(--accent-tint);
+  background: rgba(118, 118, 128, 0.14);
 }
 
 .option.selected:active {
-  background: rgba(255, 107, 0, 0.18);
+  background: rgba(118, 118, 128, 0.2);
+}
+
+.option.selected .option-text {
+  font-weight: 500;
 }
 
 /* Keep the native input for a11y, hide it visually */
@@ -353,8 +360,8 @@ button:active {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  background: var(--accent-tint);
-  color: var(--accent);
+  background: var(--success-tint);
+  color: var(--success);
   display: flex;
   align-items: center;
   justify-content: center;
