@@ -29,9 +29,8 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  /* System font first — it ships optical sizing and tracking tables */
-  font: 100%/1.5 -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
+  font: 100%/1.5 "Inter Variable", -apple-system, BlinkMacSystemFont,
+    system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
