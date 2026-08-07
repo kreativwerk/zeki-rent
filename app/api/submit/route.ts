@@ -34,6 +34,31 @@ export async function POST(request: Request) {
   // Fallback that always works: submission lands in the Vercel function logs.
   console.log("Neue Fragebogen-Einsendung", body.submittedAt ?? "", "\n" + summary);
 
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+  if (supabaseUrl && supabaseKey) {
+    const res = await fetch(`${supabaseUrl}/rest/v1/zeki_rent_submissions`, {
+      method: "POST",
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        firma: typeof answers.firma === "string" ? answers.firma : null,
+        email: typeof answers.email === "string" ? answers.email : null,
+        answers,
+        summary,
+      }),
+    });
+    if (!res.ok) {
+      console.error("Supabase-Insert fehlgeschlagen:", res.status, await res.text());
+      // Storage is the primary sink — surface the failure instead of losing data
+      return NextResponse.json({ ok: false }, { status: 500 });
+    }
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.NOTIFY_EMAIL;
   if (apiKey && to) {

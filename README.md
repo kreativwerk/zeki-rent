@@ -26,8 +26,20 @@ Dann http://localhost:3000 öffnen.
 
 ## Wohin gehen die Antworten?
 
-- **Immer:** Jede Einsendung wird formatiert in die Vercel-Function-Logs
-  geschrieben (Vercel-Dashboard → Projekt → *Logs*).
+- **Datenbank (empfohlen):** Mit gesetzten Supabase-Variablen wird jede
+  Einsendung dauerhaft in der Tabelle `zeki_rent_submissions` gespeichert
+  (einsehbar im Supabase-Dashboard → *Table Editor*). In Vercel unter
+  *Settings → Environment Variables* setzen:
+
+  | Variable | Beschreibung |
+  | --- | --- |
+  | `SUPABASE_URL` | Projekt-URL, z. B. `https://<ref>.supabase.co` |
+  | `SUPABASE_PUBLISHABLE_KEY` | Publishable Key (`sb_publishable_…`) |
+
+  Die Tabelle ist per Row Level Security abgesichert: Der öffentliche Key
+  darf nur einfügen, niemals lesen.
+- **Immer:** Jede Einsendung wird zusätzlich formatiert in die
+  Vercel-Function-Logs geschrieben (Vercel-Dashboard → Projekt → *Logs*).
 - **Optional per E-Mail:** Mit einem kostenlosen [Resend](https://resend.com)-Konto
   werden Einsendungen zusätzlich per E-Mail zugestellt. Dazu in Vercel unter
   *Settings → Environment Variables* setzen:
