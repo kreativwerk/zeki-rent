@@ -7,10 +7,12 @@
   --separator: rgba(60, 60, 67, 0.12);
   --fill: rgba(118, 118, 128, 0.08);
   --fill-pressed: rgba(118, 118, 128, 0.16);
-  --accent: #0f52ba;
-  --accent-pressed: #0c4398;
-  --accent-tint: rgba(15, 82, 186, 0.08);
-  --focus-ring: rgba(15, 82, 186, 0.25);
+  --accent: #57bee1;
+  --accent-pressed: #3aaed4;
+  --accent-deep: #1985ad; /* same hue, dark enough for small text */
+  --accent-tint: rgba(87, 190, 225, 0.14);
+  --focus-ring: rgba(87, 190, 225, 0.5);
+  --on-accent: #0c2733; /* readable text on the light-blue accent */
   --success: #34c759;
   --success-tint: rgba(52, 199, 89, 0.14);
   --error: #ff3b30;
@@ -2208,5 +2210,83 @@ a.fleet-tile:hover {
     -webkit-backdrop-filter: none;
     border-color: transparent;
     box-shadow: none;
+  }
+}
+
+/* ---------- Light-blue accent pass: softer glass, readable text ---------- */
+
+.btn-primary,
+.btn-small:not(.btn-small-secondary),
+.fleet-tile-cta {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 50%),
+    rgba(87, 190, 225, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 4px 14px rgba(87, 190, 225, 0.22);
+  color: var(--on-accent);
+}
+
+.btn-primary:hover,
+.btn-small:not(.btn-small-secondary):hover,
+.fleet-tile:hover .fleet-tile-cta {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.04) 50%),
+    rgba(58, 174, 212, 0.8);
+}
+
+.btn-primary:active,
+.btn-small:not(.btn-small-secondary):active {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03) 50%),
+    rgba(58, 174, 212, 0.88);
+}
+
+.btn-secondary,
+.btn-small-secondary {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 4px 12px rgba(28, 28, 30, 0.06);
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .btn-primary,
+  .btn-small:not(.btn-small-secondary),
+  .fleet-tile-cta {
+    color: var(--on-accent);
+  }
+}
+
+/* Small accent text needs the deep shade for contrast */
+.badge-soon {
+  color: var(--accent-deep);
+}
+
+.exclusive-tag {
+  color: var(--on-accent);
+}
+
+.fleet-tile-cta {
+  font-weight: 800;
+}
+
+/* ---------- Image logo ---------- */
+
+.logo img {
+  height: 1.9rem;
+  width: auto;
+  display: block;
+}
+
+.site-footer .logo img,
+.admin-sidebar .logo img {
+  height: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .topbar-inner .logo img {
+    height: 1.4rem;
   }
 }

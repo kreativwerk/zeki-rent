@@ -20,7 +20,8 @@ export default async function SiteHeader() {
     <div className="topbar">
       <div className="topbar-inner site-nav">
         <Link href="/" className="logo">
-          ZEKI <span>RENT</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-dark.png" alt="ZEKI" />
         </Link>
         <nav className="nav-links">
           <Link href="/#fahrzeuge">Fahrzeuge</Link>

@@ -4,7 +4,7 @@ import { cheapestPrice, formatEuro, type Vehicle } from "@/lib/types";
 import ToggSlider from "@/components/ToggSlider";
 
 const HERO_IMG =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_080536_a9b12d6f-f1bd-4086-8eb3-37fb54a03496_min.webp";
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_145336_5f2fc2d7-6f51-46fe-9024-d3a4d0cd1307_min.webp";
 
 async function getVehicles(): Promise<Vehicle[]> {
   try {

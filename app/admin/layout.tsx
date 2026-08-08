@@ -36,7 +36,8 @@ export default async function AdminLayout({
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/admin" className="logo">
-          ZEKI <span>RENT</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-light.png" alt="ZEKI" />
         </Link>
         <AdminNav />
         <div className="admin-sidebar-footer">

@@ -12,7 +12,8 @@ export default function PublicLayout({
         <div className="site-footer-inner">
           <div>
             <div className="logo">
-              ZEKI <span>RENT</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo-light.png" alt="ZEKI" />
             </div>
             <p>
               Transporter-Langzeitmiete ab 1 Monat.

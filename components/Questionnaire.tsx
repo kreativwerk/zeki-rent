@@ -116,7 +116,8 @@ export default function Questionnaire() {
       <div className="topbar">
         <div className="topbar-inner">
           <div className="logo">
-            ZEKI <span>RENT</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-dark.png" alt="ZEKI" />
           </div>
           <div className="progress-bar">
             <motion.div
