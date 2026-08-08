@@ -2,6 +2,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { cheapestPrice, formatEuro, type Vehicle } from "@/lib/types";
 
+const HERO_IMG =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_075635_f946e6e3-e891-4ed5-9373-18993a48db6d_min.webp";
+
 async function getVehicles(): Promise<Vehicle[]> {
   try {
     const supabase = await createClient();
@@ -25,7 +28,11 @@ export default async function Home() {
         <span className="hero-watermark" aria-hidden>
           ZEKI
         </span>
-        <div className="hero-split-inner hero-manifesto">
+        <div className="hero-split-inner hero-media-left">
+          <div className="hero-split-media">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={HERO_IMG} alt="VW Crafter mit ZEKI RENT Branding" />
+          </div>
           <div className="hero-split-copy">
             <h1>
               Langzeitmiete.
