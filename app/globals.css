@@ -2115,3 +2115,23 @@ a.fleet-tile:hover {
     transition: none;
   }
 }
+
+/* Tile CTAs as pill buttons */
+.fleet-tile-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.65rem 1.5rem;
+  border-radius: 999px;
+  transition: transform 100ms ease-out, background 100ms ease-out;
+}
+
+.fleet-tile:hover .fleet-tile-cta {
+  background: var(--accent-pressed);
+}
+
+.fleet-tile:active .fleet-tile-cta {
+  transform: scale(0.97);
+}
