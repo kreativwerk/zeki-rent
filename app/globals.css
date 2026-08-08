@@ -1973,3 +1973,40 @@ a.fleet-tile:hover {
     padding: 0.45rem 0.25rem;
   }
 }
+
+/* USP strip: centered, hairline separators */
+.trust-strip ul {
+  justify-content: center;
+  gap: 0;
+}
+
+.trust-strip li {
+  padding: 0 1.75rem;
+}
+
+.trust-strip li + li {
+  border-left: 1px solid var(--separator);
+}
+
+@media (max-width: 640px) {
+  .trust-strip ul {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .trust-strip li {
+    justify-content: center;
+    font-size: 1.0625rem;
+    padding: 0.875rem 0;
+  }
+  .trust-strip li + li {
+    border-left: none;
+    border-top: 1px solid var(--separator);
+  }
+  .usp-icon {
+    width: 26px;
+    height: 26px;
+  }
+}
