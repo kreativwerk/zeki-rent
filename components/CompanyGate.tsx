@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import CompanyForm, { type CompanyData } from "@/components/CompanyForm";
-
-export { isCompanyComplete } from "@/components/CompanyForm";
-export type { CompanyData } from "@/components/CompanyForm";
+import CompanyForm from "@/components/CompanyForm";
+import type { CompanyData } from "@/lib/company";
 
 /**
  * Shows the company/billing form until the customer's data is on file,

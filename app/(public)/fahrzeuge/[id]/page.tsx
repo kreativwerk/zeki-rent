@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DURATIONS, formatEuro, priceFor, type Vehicle } from "@/lib/types";
 import BookingForm from "@/components/BookingForm";
-import CompanyGate, { isCompanyComplete, type CompanyData } from "@/components/CompanyGate";
+import CompanyGate from "@/components/CompanyGate";
+import { isCompanyComplete, type CompanyData } from "@/lib/company";
 
 export default async function VehiclePage(props: {
   params: Promise<{ id: string }>;
@@ -14,30 +15,42 @@ export default async function VehiclePage(props: {
   let loggedIn = false;
   let companyComplete = false;
   let company: CompanyData | null = null;
+
+  // The vehicle decides 404 — everything else must never take the page down
   try {
     const supabase = await createClient();
-    const [{ data }, { data: auth }] = await Promise.all([
-      supabase.from("vehicles").select("*").eq("id", id).single(),
-      supabase.auth.getUser(),
-    ]);
+    const { data } = await supabase
+      .from("vehicles")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
     vehicle = data;
-    loggedIn = !!auth.user;
-    if (auth.user) {
+  } catch (err) {
+    console.error("Fahrzeug konnte nicht geladen werden:", err);
+  }
+
+  if (!vehicle) notFound();
+
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    loggedIn = !!user;
+    if (user) {
       const { data: profile } = await supabase
         .from("profiles")
         .select(
           "company_name, billing_street, billing_zip, billing_city, vat_id, delivery_same, delivery_street, delivery_zip, delivery_city"
         )
-        .eq("id", auth.user.id)
-        .single();
+        .eq("id", user.id)
+        .maybeSingle();
       company = profile;
       companyComplete = isCompanyComplete(profile);
     }
-  } catch {
-    vehicle = null;
+  } catch (err) {
+    console.error("Profil konnte nicht geladen werden:", err);
   }
-
-  if (!vehicle) notFound();
 
   return (
     <div className="page-narrow">

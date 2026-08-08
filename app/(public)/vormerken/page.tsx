@@ -20,8 +20,8 @@ export default async function PrebookPage() {
         .eq("user_id", user.id);
       listedModels = (data ?? []).map((r) => r.model as string);
     }
-  } catch {
-    loggedIn = false;
+  } catch (err) {
+    console.error("Vormerkungen konnten nicht geladen werden:", err);
   }
 
   return (

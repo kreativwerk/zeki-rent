@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import RequestForm from "@/components/RequestForm";
-import CompanyGate, { isCompanyComplete, type CompanyData } from "@/components/CompanyGate";
+import CompanyGate from "@/components/CompanyGate";
+import { isCompanyComplete, type CompanyData } from "@/lib/company";
 
 export const metadata = { title: "Wunschfahrzeug anfragen – Zeki Rent" };
 
@@ -25,12 +26,12 @@ export default async function GeneralRequestPage() {
           "company_name, billing_street, billing_zip, billing_city, vat_id, delivery_same, delivery_street, delivery_zip, delivery_city"
         )
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
       company = data;
       companyComplete = isCompanyComplete(data);
     }
-  } catch {
-    loggedIn = false;
+  } catch (err) {
+    console.error("Profil konnte nicht geladen werden:", err);
   }
 
   return (
