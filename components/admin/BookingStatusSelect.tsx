@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { BOOKING_STATUSES, type BookingStatus } from "@/lib/types";
 
 export default function BookingStatusSelect({
@@ -20,12 +19,13 @@ export default function BookingStatusSelect({
     const previous = value;
     setValue(next);
     setSaving(true);
-    const { error } = await createClient()
-      .from("bookings")
-      .update({ status: next })
-      .eq("id", id);
+    const res = await fetch("/api/bookings/status", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status: next }),
+    }).catch(() => null);
     setSaving(false);
-    if (error) {
+    if (!res?.ok) {
       setValue(previous);
       alert("Statusänderung fehlgeschlagen. Bitte erneut versuchen.");
       return;

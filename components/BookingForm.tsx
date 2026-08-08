@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import {
   DURATIONS,
   KM_PACKAGES,
@@ -73,23 +72,23 @@ export default function BookingForm({
     }
     setSubmitting(true);
     setError(null);
-    const supabase = createClient();
-    const { data: auth } = await supabase.auth.getUser();
-    if (!auth.user) {
-      setError("Bitte melden Sie sich erneut an.");
-      setSubmitting(false);
-      return;
-    }
-    const { error: insertError } = await supabase.from("bookings").insert({
-      user_id: auth.user.id,
-      vehicle_id: vehicle.id,
-      start_date: startDate,
-      duration_months: duration,
-      km_package: kmPackage,
-      note: note.trim() || null,
-    });
-    if (insertError) {
-      setError("Das hat leider nicht geklappt. Bitte versuchen Sie es erneut.");
+    const res = await fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        vehicle_id: vehicle.id,
+        start_date: startDate,
+        duration_months: duration,
+        km_package: kmPackage,
+        note: note.trim() || null,
+      }),
+    }).catch(() => null);
+    if (!res?.ok) {
+      setError(
+        res?.status === 401
+          ? "Bitte melden Sie sich erneut an."
+          : "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut."
+      );
       setSubmitting(false);
       return;
     }
