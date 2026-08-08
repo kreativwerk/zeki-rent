@@ -1,18 +1,17 @@
 /*
- * ZEKI RENT wordmark: Inter ExtraBold with the brand's accent bar
- * above the Z. Letters inherit currentColor (dark in the header,
- * white on dark surfaces).
+ * ZEKI RENT wordmark in Inter ExtraBold. An accent-colored bar sits
+ * exactly on the Z's top stroke (covering it), like the brand logo;
+ * the letters inherit currentColor.
  */
 export default function ZekiLogo() {
   return (
     <svg
-      viewBox="0 0 1260 235"
+      viewBox="0 0 1240 235"
       fill="none"
       role="img"
       aria-label="ZEKI RENT"
       className="zeki-logo"
     >
-      <rect x="4" y="0" width="148" height="36" fill="var(--accent)" />
       <text
         x="0"
         y="222"
@@ -24,6 +23,8 @@ export default function ZekiLogo() {
       >
         ZEKI RENT
       </text>
+      {/* Accent bar replacing the Z's top stroke */}
+      <rect x="2" y="53" width="150" height="47" fill="var(--accent)" />
     </svg>
   );
 }
