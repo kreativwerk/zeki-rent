@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { cheapestPrice, formatEuro, type Vehicle } from "@/lib/types";
+import ToggSlider from "@/components/ToggSlider";
 
 const HERO_IMG =
   "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_080536_a9b12d6f-f1bd-4086-8eb3-37fb54a03496_min.webp";
@@ -104,16 +105,19 @@ export default async function Home() {
             );
           })}
 
-          <Link href="/vormerken" className="fleet-tile fleet-tile-soon">
+          <Link
+            href="/vormerken"
+            className="fleet-tile fleet-tile-soon fleet-tile-exclusive"
+          >
+            <span className="exclusive-tag">Exklusiv bei uns!</span>
             <div className="fleet-tile-media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/fahrzeuge/togg-t10x.webp" alt="Togg T10X, blau" />
+              <ToggSlider />
             </div>
             <div className="fleet-tile-body">
               <span className="badge-soon">Coming soon</span>
-              <h3>Togg T10X</h3>
+              <h3>Togg T10X &amp; T10F</h3>
               <p className="fleet-tile-specs">
-                Vollelektrisches SUV · Exklusiv bei Zeki Mobility
+                Vollelektrisch · bis zu 623 km Reichweite
               </p>
               <div className="fleet-tile-foot">
                 <span className="fleet-tile-cta">Jetzt vormerken</span>
