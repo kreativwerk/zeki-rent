@@ -102,6 +102,7 @@ export default async function Home() {
                       </span>
                     )}
                     <span className="fleet-tile-cta">Jetzt anfragen</span>
+                    <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
                   </div>
                 </div>
               </Link>
@@ -124,6 +125,7 @@ export default async function Home() {
               </p>
               <div className="fleet-tile-foot">
                 <span className="fleet-tile-cta">Anfrage stellen</span>
+                <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
               </div>
             </div>
           </Link>
@@ -144,6 +146,7 @@ export default async function Home() {
               </p>
               <div className="fleet-tile-foot">
                 <span className="fleet-tile-cta">Jetzt vormerken</span>
+                <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
               </div>
             </div>
           </Link>
