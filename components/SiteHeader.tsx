@@ -34,13 +34,9 @@ export default async function SiteHeader() {
               Admin
             </Link>
           )}
-          {user ? (
+          {user && (
             <Link href="/konto" className="btn-small btn-small-secondary">
               Mein Konto
-            </Link>
-          ) : (
-            <Link href="/login" className="btn-small btn-small-secondary">
-              Anmelden
             </Link>
           )}
           <Link href="/#fahrzeuge" className="btn-small btn-cta">

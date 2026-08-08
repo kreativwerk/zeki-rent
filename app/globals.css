@@ -2503,3 +2503,14 @@ a.fleet-tile:hover {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+
+/* Larger logo now that the sign-in button is gone */
+.zeki-logo-full {
+  height: 3rem;
+}
+
+@media (max-width: 480px) {
+  .topbar-inner .zeki-logo-full {
+    height: 2.4rem;
+  }
+}
