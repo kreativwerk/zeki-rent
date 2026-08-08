@@ -72,6 +72,7 @@ export function bookingSummaryHtml(b: {
   durationMonths: number;
   kmPackage: string;
   monthlyPrice: number | null;
+  handover?: string | null;
   note?: string | null;
 }): string {
   const date = new Date(b.startDate).toLocaleDateString("de-DE", {
@@ -91,6 +92,7 @@ export function bookingSummaryHtml(b: {
       `${new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(b.monthlyPrice)} zzgl. Kilometerpaket`,
     ]);
   }
+  if (b.handover) rows.push(["Übergabe", b.handover]);
   if (b.note) rows.push(["Ihre Anmerkung", b.note]);
   return `<div style="background:#f2f2f7;border-radius:12px;padding:4px 16px;margin:16px 0;">
     ${rows

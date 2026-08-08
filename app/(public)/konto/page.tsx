@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, type Booking, type Profile } from "@/lib/types";
 import { LogoutButton } from "@/components/AuthForms";
+import CompanyForm from "@/components/CompanyForm";
 
 export const metadata = { title: "Mein Konto – Zeki Rent" };
 
@@ -44,8 +45,13 @@ export default async function AccountPage() {
   }>;
   const requestList = (generalRequests ?? []) as Array<{
     id: string;
-    vehicle_wish: string;
-    period: string | null;
+    vehicle_wish: string | null;
+    large_vans: Record<string, number> | null;
+    small_vans: number | null;
+    km_per_month: string | null;
+    fuel_type: string | null;
+    start_from: string | null;
+    handover: string | null;
     status: string;
     created_at: string;
   }>;
@@ -84,7 +90,11 @@ export default async function AccountPage() {
                     {b.duration_months}{" "}
                     {b.duration_months === 1 ? "Monat" : "Monate"}
                   </td>
-                  <td>{b.km_package}</td>
+                  <td>
+                    {b.km_package}
+                    <br />
+                    <span className="muted">{b.handover ?? "Abholung"}</span>
+                  </td>
                   <td>
                     <span className={`status status-${b.status}`}>
                       {b.status}
@@ -103,8 +113,8 @@ export default async function AccountPage() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Wunschfahrzeug</th>
-                <th>Zeitraum</th>
+                <th>Fahrzeuge</th>
+                <th>Details</th>
                 <th>Angefragt am</th>
                 <th>Status</th>
               </tr>
@@ -113,9 +123,24 @@ export default async function AccountPage() {
               {requestList.map((r) => (
                 <tr key={r.id}>
                   <td>
-                    <strong>{r.vehicle_wish}</strong>
+                    <strong>
+                      {[
+                        ...Object.entries(r.large_vans ?? {})
+                          .filter(([, n]) => n > 0)
+                          .map(([size, n]) => `${n}× ${size}`),
+                        ...(r.small_vans
+                          ? [`${r.small_vans}× Kleintransporter`]
+                          : []),
+                      ].join(", ") ||
+                        r.vehicle_wish ||
+                        "–"}
+                    </strong>
                   </td>
-                  <td>{r.period ?? "–"}</td>
+                  <td className="muted">
+                    {[r.km_per_month, r.fuel_type, r.start_from, r.handover]
+                      .filter(Boolean)
+                      .join(" · ") || "–"}
+                  </td>
                   <td>{formatDate(r.created_at)}</td>
                   <td>
                     <span className="status status-neu">{r.status}</span>
@@ -159,6 +184,14 @@ export default async function AccountPage() {
           </p>
         </div>
       )}
+
+      <div className="card">
+        <h2>Firmen- &amp; Rechnungsdaten</h2>
+        <p className="step-intro">
+          Diese Angaben verwenden wir für Angebote, Verträge und Rechnungen.
+        </p>
+        <CompanyForm initial={p} />
+      </div>
 
       <div className="card">
         <h2>Meine Daten</h2>

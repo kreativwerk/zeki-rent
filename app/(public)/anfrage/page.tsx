@@ -1,23 +1,40 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import RequestForm from "@/components/RequestForm";
+import CompanyGate, { isCompanyComplete, type CompanyData } from "@/components/CompanyGate";
 
 export const metadata = { title: "Wunschfahrzeug anfragen – Zeki Rent" };
 
+const PARTNER_IMG =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_205457_f669bfdb-f449-4197-8292-a0b92c742223_min.webp";
+
 export default async function GeneralRequestPage() {
   let loggedIn = false;
+  let companyComplete = false;
+  let company: CompanyData | null = null;
   try {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     loggedIn = !!user;
+    if (user) {
+      const { data } = await supabase
+        .from("profiles")
+        .select(
+          "company_name, billing_street, billing_zip, billing_city, vat_id, delivery_same, delivery_street, delivery_zip, delivery_city"
+        )
+        .eq("id", user.id)
+        .single();
+      company = data;
+      companyComplete = isCompanyComplete(data);
+    }
   } catch {
     loggedIn = false;
   }
 
   return (
-    <div className="page-narrow">
+    <div className="page-narrow page-wide">
       <Link href="/#fahrzeuge" className="back-link">
         ← Alle Fahrzeuge
       </Link>
@@ -30,13 +47,13 @@ export default async function GeneralRequestPage() {
             vermieten können.
           </p>
           <ul className="spec-list">
-            <li>Vom Kleinwagen bis zum 7,5-Tonner</li>
+            <li>Vom Kleintransporter bis zum L4H3-Kastenwagen</li>
+            <li>Diesel oder Elektro, Abholung oder Lieferung</li>
             <li>Bestpreise über unser Partnernetzwerk</li>
-            <li>Unverbindlich anfragen, wir melden uns mit einem Angebot</li>
           </ul>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_205457_f669bfdb-f449-4197-8292-a0b92c742223_min.webp"
+            src={PARTNER_IMG}
             alt="VW Transporter und Crafter mit ZEKI RENT Kennzeichenhaltern"
             style={{ width: "100%", borderRadius: "1rem", marginTop: "1rem" }}
           />
@@ -45,7 +62,9 @@ export default async function GeneralRequestPage() {
         <div className="booking-panel">
           <h2>Jetzt anfragen</h2>
           {loggedIn ? (
-            <RequestForm />
+            <CompanyGate complete={companyComplete} initial={company}>
+              <RequestForm />
+            </CompanyGate>
           ) : (
             <div className="booking-login-hint">
               <p>

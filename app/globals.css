@@ -2413,3 +2413,93 @@ a.fleet-tile:hover {
   color: var(--muted);
   margin: 0;
 }
+
+/* ---------- Click-first request configurator ---------- */
+
+.page-wide {
+  max-width: 64rem;
+}
+
+.choice-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.choice-pills .pill {
+  flex: 0 0 auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+}
+
+.stepper-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 0.5rem;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--separator);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.875rem;
+  background: #fff;
+  transition: border-color 120ms ease-out, background 120ms ease-out;
+}
+
+.stepper-active {
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.stepper-label strong {
+  display: block;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+}
+
+.stepper-label span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.stepper-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: none;
+}
+
+.stepper-controls button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--text);
+  font-size: 1.125rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepper-controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.stepper-active .stepper-controls button {
+  background: rgba(30, 147, 191, 0.18);
+}
+
+.stepper-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

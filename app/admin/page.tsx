@@ -8,17 +8,58 @@ interface Prebooking {
   note: string | null;
   status: string;
   created_at: string;
-  profiles?: { name: string | null; email: string | null; phone: string | null } | null;
+  profiles?: CustomerRef | null;
 }
 
 interface GeneralRequest {
   id: string;
-  vehicle_wish: string;
-  period: string | null;
+  vehicle_wish: string | null;
+  large_vans: Record<string, number> | null;
+  small_vans: number | null;
+  km_per_month: string | null;
+  fuel_type: string | null;
+  start_from: string | null;
+  handover: string | null;
   note: string | null;
   status: string;
   created_at: string;
-  profiles?: { name: string | null; email: string | null; phone: string | null } | null;
+  profiles?: CustomerRef | null;
+}
+
+interface CustomerRef {
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  company_name?: string | null;
+  billing_street?: string | null;
+  billing_zip?: string | null;
+  billing_city?: string | null;
+}
+
+function describeVehicles(r: GeneralRequest): string {
+  const parts: string[] = [];
+  for (const [size, count] of Object.entries(r.large_vans ?? {})) {
+    if (count > 0) parts.push(`${count}× ${size}`);
+  }
+  if (r.small_vans) parts.push(`${r.small_vans}× Kleintransporter`);
+  return parts.join(", ") || r.vehicle_wish || "–";
+}
+
+function CustomerCell({ c }: { c?: CustomerRef | null }) {
+  return (
+    <>
+      <strong>{c?.company_name ?? c?.name ?? "–"}</strong>
+      <br />
+      <span className="muted">
+        {c?.company_name ? `${c.name ?? ""} · ` : ""}
+        {c?.email}
+        {c?.phone ? ` · ${c.phone}` : ""}
+        {c?.billing_street
+          ? ` · ${c.billing_street}, ${c.billing_zip ?? ""} ${c.billing_city ?? ""}`
+          : ""}
+      </span>
+    </>
+  );
 }
 
 export default async function AdminBookingsPage() {
@@ -27,15 +68,15 @@ export default async function AdminBookingsPage() {
     await Promise.all([
       supabase
         .from("bookings")
-        .select("*, vehicles(name), profiles(name, email, phone)")
+        .select("*, vehicles(name), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
         .order("created_at", { ascending: false }),
       supabase
         .from("prebookings")
-        .select("*, profiles(name, email, phone)")
+        .select("*, profiles(name, email, phone, company_name)")
         .order("created_at", { ascending: false }),
       supabase
         .from("general_requests")
-        .select("*, profiles(name, email, phone)")
+        .select("*, profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
         .order("created_at", { ascending: false }),
     ]);
 
@@ -76,12 +117,7 @@ export default async function AdminBookingsPage() {
                 <tr key={b.id}>
                   <td>{formatDate(b.created_at)}</td>
                   <td>
-                    <strong>{b.profiles?.name ?? "–"}</strong>
-                    <br />
-                    <span className="muted">
-                      {b.profiles?.email}
-                      {b.profiles?.phone ? ` · ${b.profiles.phone}` : ""}
-                    </span>
+                    <CustomerCell c={b.profiles as CustomerRef | null} />
                   </td>
                   <td>{b.vehicles?.name ?? "–"}</td>
                   <td>
@@ -92,7 +128,11 @@ export default async function AdminBookingsPage() {
                       {b.duration_months === 1 ? "Monat" : "Monate"}
                     </span>
                   </td>
-                  <td>{b.km_package}</td>
+                  <td>
+                    {b.km_package}
+                    <br />
+                    <span className="muted">{b.handover ?? "Abholung"}</span>
+                  </td>
                   <td className="note-cell">{b.note ?? "–"}</td>
                   <td>
                     <BookingStatusSelect id={b.id} status={b.status} />
@@ -120,8 +160,8 @@ export default async function AdminBookingsPage() {
               <tr>
                 <th>Datum</th>
                 <th>Kunde</th>
-                <th>Wunschfahrzeug</th>
-                <th>Zeitraum</th>
+                <th>Fahrzeuge</th>
+                <th>Details</th>
                 <th>Anmerkung</th>
                 <th>Status</th>
               </tr>
@@ -131,17 +171,16 @@ export default async function AdminBookingsPage() {
                 <tr key={r.id}>
                   <td>{formatDate(r.created_at)}</td>
                   <td>
-                    <strong>{r.profiles?.name ?? "–"}</strong>
-                    <br />
-                    <span className="muted">
-                      {r.profiles?.email}
-                      {r.profiles?.phone ? ` · ${r.profiles.phone}` : ""}
-                    </span>
+                    <CustomerCell c={r.profiles} />
                   </td>
                   <td>
-                    <strong>{r.vehicle_wish}</strong>
+                    <strong>{describeVehicles(r)}</strong>
                   </td>
-                  <td>{r.period ?? "–"}</td>
+                  <td className="muted">
+                    {[r.km_per_month, r.fuel_type, r.start_from, r.handover]
+                      .filter(Boolean)
+                      .join(" · ") || "–"}
+                  </td>
                   <td className="note-cell">{r.note ?? "–"}</td>
                   <td>
                     <span className="status status-neu">{r.status}</span>
@@ -179,12 +218,7 @@ export default async function AdminBookingsPage() {
                 <tr key={pb.id}>
                   <td>{formatDate(pb.created_at)}</td>
                   <td>
-                    <strong>{pb.profiles?.name ?? "–"}</strong>
-                    <br />
-                    <span className="muted">
-                      {pb.profiles?.email}
-                      {pb.profiles?.phone ? ` · ${pb.profiles.phone}` : ""}
-                    </span>
+                    <CustomerCell c={pb.profiles as CustomerRef | null} />
                   </td>
                   <td>{pb.model}</td>
                   <td className="note-cell">{pb.note ?? "–"}</td>

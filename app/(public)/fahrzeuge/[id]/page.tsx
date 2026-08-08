@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DURATIONS, formatEuro, priceFor, type Vehicle } from "@/lib/types";
 import BookingForm from "@/components/BookingForm";
+import CompanyGate, { isCompanyComplete, type CompanyData } from "@/components/CompanyGate";
 
 export default async function VehiclePage(props: {
   params: Promise<{ id: string }>;
@@ -11,6 +12,8 @@ export default async function VehiclePage(props: {
 
   let vehicle: Vehicle | null = null;
   let loggedIn = false;
+  let companyComplete = false;
+  let company: CompanyData | null = null;
   try {
     const supabase = await createClient();
     const [{ data }, { data: auth }] = await Promise.all([
@@ -19,6 +22,17 @@ export default async function VehiclePage(props: {
     ]);
     vehicle = data;
     loggedIn = !!auth.user;
+    if (auth.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select(
+          "company_name, billing_street, billing_zip, billing_city, vat_id, delivery_same, delivery_street, delivery_zip, delivery_city"
+        )
+        .eq("id", auth.user.id)
+        .single();
+      company = profile;
+      companyComplete = isCompanyComplete(profile);
+    }
   } catch {
     vehicle = null;
   }
@@ -68,7 +82,13 @@ export default async function VehiclePage(props: {
 
         <div className="booking-panel">
           <h2>Jetzt anfragen</h2>
-          <BookingForm vehicle={vehicle} loggedIn={loggedIn} />
+          {loggedIn ? (
+            <CompanyGate complete={companyComplete} initial={company}>
+              <BookingForm vehicle={vehicle} loggedIn />
+            </CompanyGate>
+          ) : (
+            <BookingForm vehicle={vehicle} loggedIn={false} />
+          )}
         </div>
       </div>
     </div>

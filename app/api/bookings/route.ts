@@ -16,6 +16,7 @@ export async function POST(request: Request) {
     start_date?: string;
     duration_months?: number;
     km_package?: string;
+    handover?: string;
     note?: string | null;
   };
   try {
@@ -40,6 +41,23 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ ok: false }, { status: 401 });
 
+  const { data: profileCheck } = await supabase
+    .from("profiles")
+    .select("company_name, billing_street, billing_zip, billing_city")
+    .eq("id", user.id)
+    .single();
+  if (
+    !profileCheck?.company_name ||
+    !profileCheck?.billing_street ||
+    !profileCheck?.billing_zip ||
+    !profileCheck?.billing_city
+  ) {
+    return NextResponse.json(
+      { ok: false, reason: "company_data_missing" },
+      { status: 422 }
+    );
+  }
+
   const { data: vehicle } = await supabase
     .from("vehicles")
     .select("*")
@@ -53,6 +71,7 @@ export async function POST(request: Request) {
     start_date: body.start_date,
     duration_months: body.duration_months,
     km_package: body.km_package,
+    handover: body.handover === "Lieferung" ? "Lieferung" : "Abholung",
     note: body.note?.trim() || null,
   });
   if (insertError) {
@@ -62,7 +81,7 @@ export async function POST(request: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, phone, email")
+    .select("name, phone, email, company_name, billing_street, billing_zip, billing_city, delivery_same, delivery_street, delivery_zip, delivery_city")
     .eq("id", user.id)
     .single();
 
@@ -72,6 +91,7 @@ export async function POST(request: Request) {
     durationMonths: body.duration_months,
     kmPackage: body.km_package,
     monthlyPrice: priceFor(vehicle as Vehicle, body.duration_months),
+    handover: body.handover,
     note: body.note,
   });
 
@@ -90,13 +110,25 @@ export async function POST(request: Request) {
     });
   }
 
+  const deliveryLine =
+    body.handover === "Lieferung"
+      ? `<p style="font-size:14px;"><span style="color:#8e8e93;">Lieferadresse</span><br><strong>${
+          profile?.delivery_same === false && profile?.delivery_street
+            ? `${profile.delivery_street}, ${profile.delivery_zip ?? ""} ${profile.delivery_city ?? ""}`
+            : `${profile?.billing_street ?? ""}, ${profile?.billing_zip ?? ""} ${profile?.billing_city ?? ""}`
+        }</strong></p>`
+      : "";
+
   await notifyOwner(
     `Neue Mietanfrage: ${(vehicle as Vehicle).name}`,
     emailLayout(
       "Neue Mietanfrage",
-      `<p style="font-size:14px;"><strong>${profile?.name ?? "Unbekannt"}</strong><br>
-        ${customerEmail ?? ""}${profile?.phone ? `<br>${profile.phone}` : ""}</p>
+      `<p style="font-size:14px;"><strong>${profile?.company_name ?? ""}</strong><br>
+        ${profile?.name ?? "Unbekannt"}<br>
+        ${customerEmail ?? ""}${profile?.phone ? `<br>${profile.phone}` : ""}<br>
+        <span style="color:#8e8e93;">${profile?.billing_street ?? ""}, ${profile?.billing_zip ?? ""} ${profile?.billing_city ?? ""}</span></p>
        ${summary}
+       ${deliveryLine}
        <p style="font-size:14px;">Bestätigen oder ablehnen im <a href="https://zeki-rent-cpon.vercel.app/admin" style="color:#0f52ba;">Admin-Bereich</a>.</p>`
     )
   );

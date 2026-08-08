@@ -20,6 +20,7 @@ export default function BookingForm({
   const [duration, setDuration] = useState<number>(1);
   const [startDate, setStartDate] = useState("");
   const [kmPackage, setKmPackage] = useState(KM_PACKAGES[0]);
+  const [handover, setHandover] = useState("Abholung");
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -80,6 +81,7 @@ export default function BookingForm({
         start_date: startDate,
         duration_months: duration,
         km_package: kmPackage,
+        handover,
         note: note.trim() || null,
       }),
     }).catch(() => null);
@@ -145,6 +147,22 @@ export default function BookingForm({
             <option key={p}>{p}</option>
           ))}
         </select>
+      </div>
+
+      <div className="field">
+        <label className="field-label">Abholung oder Lieferung?</label>
+        <div className="choice-pills">
+          {["Abholung", "Lieferung"].map((o) => (
+            <button
+              key={o}
+              type="button"
+              className={`pill ${handover === o ? "pill-active" : ""}`}
+              onClick={() => setHandover(o)}
+            >
+              {o}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="field">
