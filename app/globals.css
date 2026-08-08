@@ -1924,3 +1924,52 @@ a.fleet-tile:hover {
 .hero-media-left .hero-actions {
   justify-content: flex-start;
 }
+
+/* Header CTA */
+.btn-small-secondary {
+  background: var(--fill);
+  color: var(--text);
+}
+
+.btn-small-secondary:active {
+  background: var(--fill-pressed);
+}
+
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.btn-cta svg {
+  flex: none;
+}
+
+@media (max-width: 480px) {
+  .btn-small {
+    font-size: 0.9375rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+.btn-small {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .topbar-inner {
+    gap: 0.5rem;
+  }
+  .topbar-inner .logo {
+    font-size: 1.25rem;
+  }
+  .btn-small {
+    font-size: 0.875rem;
+    padding: 0.45rem 0.85rem;
+  }
+  /* Anmelden wird auf dem Handy zum schlichten Textlink */
+  .btn-small-secondary {
+    background: none;
+    padding: 0.45rem 0.25rem;
+  }
+}
