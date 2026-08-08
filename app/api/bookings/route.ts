@@ -97,7 +97,7 @@ export async function POST(request: Request) {
       `<p style="font-size:14px;"><strong>${profile?.name ?? "Unbekannt"}</strong><br>
         ${customerEmail ?? ""}${profile?.phone ? `<br>${profile.phone}` : ""}</p>
        ${summary}
-       <p style="font-size:14px;">Bestätigen oder ablehnen im <a href="https://zeki-rent-cpon.vercel.app/admin" style="color:#193bf4;">Admin-Bereich</a>.</p>`
+       <p style="font-size:14px;">Bestätigen oder ablehnen im <a href="https://zeki-rent-cpon.vercel.app/admin" style="color:#0f52ba;">Admin-Bereich</a>.</p>`
     )
   );
 

@@ -7,10 +7,10 @@
   --separator: rgba(60, 60, 67, 0.12);
   --fill: rgba(118, 118, 128, 0.08);
   --fill-pressed: rgba(118, 118, 128, 0.16);
-  --accent: #193bf4;
-  --accent-pressed: #1230c9;
-  --accent-tint: rgba(25, 59, 244, 0.08);
-  --focus-ring: rgba(25, 59, 244, 0.25);
+  --accent: #0f52ba;
+  --accent-pressed: #0c4398;
+  --accent-tint: rgba(15, 82, 186, 0.08);
+  --focus-ring: rgba(15, 82, 186, 0.25);
   --success: #34c759;
   --success-tint: rgba(52, 199, 89, 0.14);
   --error: #ff3b30;
@@ -1546,7 +1546,7 @@ main {
   top: auto;
   bottom: -0.1em;
   font-size: clamp(9rem, 26vw, 20rem);
-  color: rgba(25, 59, 244, 0.05);
+  color: rgba(15, 82, 186, 0.05);
 }
 
 .hero-split-inner {

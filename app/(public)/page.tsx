@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { cheapestPrice, formatEuro, type Vehicle } from "@/lib/types";
 
 const HERO_IMG =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_075635_f946e6e3-e891-4ed5-9373-18993a48db6d_min.webp";
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_080536_a9b12d6f-f1bd-4086-8eb3-37fb54a03496_min.webp";
 
 async function getVehicles(): Promise<Vehicle[]> {
   try {
