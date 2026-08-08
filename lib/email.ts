@@ -59,7 +59,7 @@ export function emailLayout(title: string, bodyHtml: string): string {
     </div>
     <p style="color:#8e8e93;font-size:12px;margin-top:16px;">
       Zeki Rent GmbH · Telefon 0163 9574116 ·
-      <a href="mailto:koray.zeki@zeki-rent.com" style="color:#8e8e93;">koray.zeki@zeki-rent.com</a>
+      <a href="mailto:info@zeki-rent.com" style="color:#8e8e93;">info@zeki-rent.com</a>
     </p>
   </div>
 </body>

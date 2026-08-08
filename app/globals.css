@@ -1876,10 +1876,14 @@ a.fleet-tile:hover {
   justify-content: flex-start;
 }
 
-/* Hero with media on the left, copy on the right */
+/* Hero: copy left, vehicle on the right (desktop); copy first on phones */
 .hero-media-left {
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1fr 1.1fr;
   align-items: center;
+}
+
+.hero-media-left .hero-split-media {
+  order: 2;
 }
 
 .hero-media-left .hero-split-media img {
@@ -1889,9 +1893,5 @@ a.fleet-tile:hover {
 @media (max-width: 820px) {
   .hero-media-left {
     grid-template-columns: 1fr;
-  }
-  /* On phones the copy comes first, the vehicle after */
-  .hero-media-left .hero-split-media {
-    order: 2;
   }
 }

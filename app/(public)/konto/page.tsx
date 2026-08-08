@@ -130,8 +130,8 @@ export default async function AccountPage() {
         <p className="fine-print">
           Sie können jederzeit Auskunft, Berichtigung oder Löschung Ihrer
           Daten verlangen. Eine kurze E-Mail an{" "}
-          <a href="mailto:koray.zeki@zeki-rent.com">
-            koray.zeki@zeki-rent.com
+          <a href="mailto:info@zeki-rent.com">
+            info@zeki-rent.com
           </a>{" "}
           genügt. Details in der{" "}
           <Link href="/datenschutz">Datenschutzerklärung</Link>.

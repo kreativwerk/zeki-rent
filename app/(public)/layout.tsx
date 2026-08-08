@@ -25,8 +25,8 @@ export default function PublicLayout({
             <p>
               <a href="tel:+491639574116">0163 9574116</a>
               <br />
-              <a href="mailto:koray.zeki@zeki-rent.com">
-                koray.zeki@zeki-rent.com
+              <a href="mailto:info@zeki-rent.com">
+                info@zeki-rent.com
               </a>
             </p>
           </div>

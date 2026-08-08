@@ -16,7 +16,7 @@ export default function ImprintPage() {
         <br />
         Telefon: 0163 9574116
         <br />
-        E-Mail: koray.zeki@zeki-rent.com
+        E-Mail: info@zeki-rent.com
       </p>
       <p>
         Handelsregister: [Amtsgericht, HRB-Nummer]

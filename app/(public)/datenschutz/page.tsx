@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         <br />
         [PLZ und Ort]
         <br />
-        E-Mail: koray.zeki@zeki-rent.com · Telefon: 0163 9574116
+        E-Mail: info@zeki-rent.com · Telefon: 0163 9574116
       </p>
 
       <h2>2. Welche Daten wir verarbeiten</h2>
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
         Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18),
         Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO).
         Wenden Sie sich dazu formlos an{" "}
-        <a href="mailto:koray.zeki@zeki-rent.com">koray.zeki@zeki-rent.com</a>.
+        <a href="mailto:info@zeki-rent.com">info@zeki-rent.com</a>.
         Zudem besteht ein Beschwerderecht bei einer
         Datenschutz-Aufsichtsbehörde.
       </p>
