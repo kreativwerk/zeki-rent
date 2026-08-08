@@ -2010,3 +2010,16 @@ a.fleet-tile:hover {
     height: 26px;
   }
 }
+
+/* USP mobile: block centered, items left-aligned with each other */
+@media (max-width: 640px) {
+  .trust-strip ul {
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto;
+    align-items: stretch;
+  }
+  .trust-strip li {
+    justify-content: flex-start;
+  }
+}

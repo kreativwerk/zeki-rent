@@ -58,9 +58,8 @@ export default async function Home() {
         <ul>
           {[
             "Ab 1 Monat Laufzeit",
-            "24/7-Übergabe",
+            "24/7 Übergabe / Abholung",
             "Bring- & Abholservice",
-            "Führerschein B genügt",
           ].map((usp) => (
             <li key={usp}>
               <TaskAltIcon />
