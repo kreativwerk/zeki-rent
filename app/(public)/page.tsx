@@ -94,7 +94,7 @@ export default async function Home() {
             );
           })}
 
-          <div className="fleet-tile fleet-tile-soon">
+          <Link href="/vormerken" className="fleet-tile fleet-tile-soon">
             <div className="fleet-tile-media">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/fahrzeuge/togg-t10x.webp" alt="Togg T10X, blau" />
@@ -106,12 +106,10 @@ export default async function Home() {
                 Vollelektrisches SUV · Exklusiv bei Zeki Mobility
               </p>
               <div className="fleet-tile-foot">
-                <a href="tel:+491639574116" className="fleet-tile-cta">
-                  Jetzt vormerken
-                </a>
+                <span className="fleet-tile-cta">Jetzt vormerken</span>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 

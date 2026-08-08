@@ -13,16 +13,27 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/konto");
 
-  const [{ data: profile }, { data: bookings }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user.id).single(),
-    supabase
-      .from("bookings")
-      .select("*, vehicles(name)")
-      .order("created_at", { ascending: false }),
-  ]);
+  const [{ data: profile }, { data: bookings }, { data: prebookings }] =
+    await Promise.all([
+      supabase.from("profiles").select("*").eq("id", user.id).single(),
+      supabase
+        .from("bookings")
+        .select("*, vehicles(name)")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("prebookings")
+        .select("*")
+        .order("created_at", { ascending: false }),
+    ]);
 
   const p = profile as Profile | null;
   const list = (bookings ?? []) as Booking[];
+  const prebookList = (prebookings ?? []) as Array<{
+    id: string;
+    model: string;
+    status: string;
+    created_at: string;
+  }>;
 
   return (
     <div className="page-narrow">
@@ -70,6 +81,39 @@ export default async function AccountPage() {
           </table>
         )}
       </div>
+
+      {prebookList.length > 0 && (
+        <div className="card">
+          <h2>Meine Vormerkungen</h2>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Fahrzeug</th>
+                <th>Vorgemerkt am</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {prebookList.map((pb) => (
+                <tr key={pb.id}>
+                  <td>
+                    <strong>{pb.model}</strong>
+                  </td>
+                  <td>{formatDate(pb.created_at)}</td>
+                  <td>
+                    <span className="status status-neu">
+                      {pb.status === "neu" ? "vorgemerkt" : pb.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="fine-print">
+            Wir melden uns, sobald das Fahrzeug verfügbar ist.
+          </p>
+        </div>
+      )}
 
       <div className="card">
         <h2>Meine Daten</h2>
