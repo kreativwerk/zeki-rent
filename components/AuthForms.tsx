@@ -97,6 +97,8 @@ export function RegisterForm({ next }: { next: string }) {
       password,
       options: {
         data: { name, phone, consent: "true" },
+        // Confirmation link returns to the live site, not localhost
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     });
     if (authError) {
