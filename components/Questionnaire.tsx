@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { steps, type Field } from "@/lib/questions";
+import ZekiLogo from "@/components/Logo";
 
 type Answers = Record<string, string | string[]>;
 
@@ -116,8 +117,7 @@ export default function Questionnaire() {
       <div className="topbar">
         <div className="topbar-inner">
           <div className="logo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-dark.png" alt="ZEKI" />
+            <ZekiLogo />
           </div>
           <div className="progress-bar">
             <motion.div

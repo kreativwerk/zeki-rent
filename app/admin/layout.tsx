@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/AuthForms";
 import AdminNav from "@/components/admin/AdminNav";
+import ZekiLogo from "@/components/Logo";
 
 export const metadata = { title: "Admin – Zeki Rent" };
 
@@ -36,8 +37,7 @@ export default async function AdminLayout({
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/admin" className="logo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-light.png" alt="ZEKI" />
+          <ZekiLogo />
         </Link>
         <AdminNav />
         <div className="admin-sidebar-footer">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
+import ZekiLogo from "@/components/Logo";
 
 export default function PublicLayout({
   children,
@@ -12,8 +13,7 @@ export default function PublicLayout({
         <div className="site-footer-inner">
           <div>
             <div className="logo">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-light.png" alt="ZEKI" />
+              <ZekiLogo />
             </div>
             <p>
               Transporter-Langzeitmiete ab 1 Monat.

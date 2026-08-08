@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import ZekiLogo from "@/components/Logo";
 
 export default async function SiteHeader() {
   let user = null;
@@ -20,8 +21,7 @@ export default async function SiteHeader() {
     <div className="topbar">
       <div className="topbar-inner site-nav">
         <Link href="/" className="logo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-dark.png" alt="ZEKI" />
+          <ZekiLogo />
         </Link>
         <nav className="nav-links">
           <Link href="/#fahrzeuge">Fahrzeuge</Link>
