@@ -37,7 +37,7 @@ export default async function AdminLayout({
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/admin" className="logo">
-          <ZekiLogo />
+          <ZekiLogo variant="letter" />
         </Link>
         <AdminNav />
         <div className="admin-sidebar-footer">

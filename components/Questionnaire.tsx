@@ -117,7 +117,7 @@ export default function Questionnaire() {
       <div className="topbar">
         <div className="topbar-inner">
           <div className="logo">
-            <ZekiLogo />
+            <ZekiLogo variant="letter" />
           </div>
           <div className="progress-bar">
             <motion.div

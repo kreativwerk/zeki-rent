@@ -2358,3 +2358,22 @@ a.fleet-tile:hover {
     color: #fff;
   }
 }
+
+/* Official logo sizing */
+.zeki-logo {
+  height: 2.1rem;
+}
+
+.zeki-logo-full {
+  height: 2.4rem;
+}
+
+.site-footer .zeki-logo-full {
+  height: 2rem;
+}
+
+@media (max-width: 480px) {
+  .topbar-inner .zeki-logo-full {
+    height: 1.7rem;
+  }
+}
