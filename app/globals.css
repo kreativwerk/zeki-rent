@@ -1895,3 +1895,32 @@ a.fleet-tile:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* USP strip with task_alt icons */
+.trust-strip li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.usp-icon {
+  color: var(--accent);
+  flex: none;
+}
+
+.trust-strip li::before {
+  content: none;
+}
+
+@media (max-width: 640px) {
+  .trust-strip ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
+  }
+}
+
+.hero-media-left .hero-actions {
+  justify-content: flex-start;
+}
