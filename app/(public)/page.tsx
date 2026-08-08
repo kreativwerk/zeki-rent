@@ -43,7 +43,7 @@ export default async function Home() {
                 Fahrzeuge ansehen
               </Link>
               <a href="tel:+491639574116" className="btn-secondary btn-link">
-                0163 9574116
+                Jetzt anrufen
               </a>
             </div>
           </div>
