@@ -2377,3 +2377,8 @@ a.fleet-tile:hover {
     height: 1.7rem;
   }
 }
+
+/* Fleet grid fits three tiles */
+.fleet-duo {
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+}

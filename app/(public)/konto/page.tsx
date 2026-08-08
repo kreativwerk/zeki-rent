@@ -13,8 +13,12 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/konto");
 
-  const [{ data: profile }, { data: bookings }, { data: prebookings }] =
-    await Promise.all([
+  const [
+    { data: profile },
+    { data: bookings },
+    { data: prebookings },
+    { data: generalRequests },
+  ] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).single(),
       supabase
         .from("bookings")
@@ -24,6 +28,10 @@ export default async function AccountPage() {
         .from("prebookings")
         .select("*")
         .order("created_at", { ascending: false }),
+      supabase
+        .from("general_requests")
+        .select("*")
+        .order("created_at", { ascending: false }),
     ]);
 
   const p = profile as Profile | null;
@@ -31,6 +39,13 @@ export default async function AccountPage() {
   const prebookList = (prebookings ?? []) as Array<{
     id: string;
     model: string;
+    status: string;
+    created_at: string;
+  }>;
+  const requestList = (generalRequests ?? []) as Array<{
+    id: string;
+    vehicle_wish: string;
+    period: string | null;
     status: string;
     created_at: string;
   }>;
@@ -81,6 +96,36 @@ export default async function AccountPage() {
           </table>
         )}
       </div>
+
+      {requestList.length > 0 && (
+        <div className="card">
+          <h2>Meine Fahrzeug-Anfragen</h2>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Wunschfahrzeug</th>
+                <th>Zeitraum</th>
+                <th>Angefragt am</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requestList.map((r) => (
+                <tr key={r.id}>
+                  <td>
+                    <strong>{r.vehicle_wish}</strong>
+                  </td>
+                  <td>{r.period ?? "–"}</td>
+                  <td>{formatDate(r.created_at)}</td>
+                  <td>
+                    <span className="status status-neu">{r.status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {prebookList.length > 0 && (
         <div className="card">

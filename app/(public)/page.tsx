@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { cheapestPrice, formatEuro, type Vehicle } from "@/lib/types";
 import ToggSlider from "@/components/ToggSlider";
 
+const PARTNER_IMG =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_205457_f669bfdb-f449-4197-8292-a0b92c742223_min.webp";
+
 const HERO_IMG =
   "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_202348_50c51be0-1e29-4bef-9113-56c3c98e6d50_min.webp";
 
@@ -104,6 +107,26 @@ export default async function Home() {
               </Link>
             );
           })}
+
+          <Link href="/anfrage" className="fleet-tile">
+            <div className="fleet-tile-media">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={PARTNER_IMG}
+                alt="VW Transporter und Crafter mit ZEKI RENT Kennzeichenhaltern"
+              />
+            </div>
+            <div className="fleet-tile-body">
+              <h3>Wunschfahrzeug anfragen</h3>
+              <p className="fleet-tile-specs">
+                Groß oder klein: Über unser breites Netzwerk an Partnerfirmen
+                vermieten wir dir dein Wunschfahrzeug zu unseren Bestpreisen.
+              </p>
+              <div className="fleet-tile-foot">
+                <span className="fleet-tile-cta">Anfrage stellen</span>
+              </div>
+            </div>
+          </Link>
 
           <Link
             href="/vormerken"

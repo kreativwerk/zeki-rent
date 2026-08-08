@@ -11,21 +11,37 @@ interface Prebooking {
   profiles?: { name: string | null; email: string | null; phone: string | null } | null;
 }
 
+interface GeneralRequest {
+  id: string;
+  vehicle_wish: string;
+  period: string | null;
+  note: string | null;
+  status: string;
+  created_at: string;
+  profiles?: { name: string | null; email: string | null; phone: string | null } | null;
+}
+
 export default async function AdminBookingsPage() {
   const supabase = await createClient();
-  const [{ data }, { data: prebookData }] = await Promise.all([
-    supabase
-      .from("bookings")
-      .select("*, vehicles(name), profiles(name, email, phone)")
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("prebookings")
-      .select("*, profiles(name, email, phone)")
-      .order("created_at", { ascending: false }),
-  ]);
+  const [{ data }, { data: prebookData }, { data: requestData }] =
+    await Promise.all([
+      supabase
+        .from("bookings")
+        .select("*, vehicles(name), profiles(name, email, phone)")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("prebookings")
+        .select("*, profiles(name, email, phone)")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("general_requests")
+        .select("*, profiles(name, email, phone)")
+        .order("created_at", { ascending: false }),
+    ]);
 
   const bookings = (data ?? []) as Booking[];
   const prebookings = (prebookData ?? []) as Prebooking[];
+  const generalRequests = (requestData ?? []) as GeneralRequest[];
   const open = bookings.filter((b) => b.status === "neu").length;
 
   return (
@@ -80,6 +96,55 @@ export default async function AdminBookingsPage() {
                   <td className="note-cell">{b.note ?? "–"}</td>
                   <td>
                     <BookingStatusSelect id={b.id} status={b.status} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="admin-page-header" style={{ marginTop: "2rem" }}>
+        <h1>Allgemeine Anfragen</h1>
+        <p>{generalRequests.length} gesamt</p>
+      </div>
+
+      {generalRequests.length === 0 ? (
+        <div className="card">
+          <p className="empty-state">Noch keine allgemeinen Anfragen.</p>
+        </div>
+      ) : (
+        <div className="card table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Kunde</th>
+                <th>Wunschfahrzeug</th>
+                <th>Zeitraum</th>
+                <th>Anmerkung</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {generalRequests.map((r) => (
+                <tr key={r.id}>
+                  <td>{formatDate(r.created_at)}</td>
+                  <td>
+                    <strong>{r.profiles?.name ?? "–"}</strong>
+                    <br />
+                    <span className="muted">
+                      {r.profiles?.email}
+                      {r.profiles?.phone ? ` · ${r.profiles.phone}` : ""}
+                    </span>
+                  </td>
+                  <td>
+                    <strong>{r.vehicle_wish}</strong>
+                  </td>
+                  <td>{r.period ?? "–"}</td>
+                  <td className="note-cell">{r.note ?? "–"}</td>
+                  <td>
+                    <span className="status status-neu">{r.status}</span>
                   </td>
                 </tr>
               ))}
