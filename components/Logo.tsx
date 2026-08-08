@@ -6,7 +6,7 @@
 export default function ZekiLogo() {
   return (
     <svg
-      viewBox="0 0 1010 240"
+      viewBox="0 0 1650 240"
       fill="none"
       role="img"
       aria-label="ZEKI RENT"
@@ -14,10 +14,7 @@ export default function ZekiLogo() {
     >
       {/* Z: accent top bar, diagonal, bottom bar */}
       <rect x="0" y="0" width="172" height="44" fill="var(--accent)" />
-      <polygon
-        points="172,64 116,64 0,176 56,176"
-        fill="currentColor"
-      />
+      <polygon points="172,64 116,64 0,176 56,176" fill="currentColor" />
       <rect x="0" y="176" width="172" height="44" fill="currentColor" />
 
       {/* E: three floating bars */}
@@ -25,29 +22,33 @@ export default function ZekiLogo() {
       <rect x="216" y="88" width="168" height="44" fill="currentColor" />
       <rect x="216" y="176" width="168" height="44" fill="currentColor" />
 
-      {/* K: stem and two diagonals */}
+      {/* K: stem and two mirror-symmetric diagonals */}
       <rect x="428" y="0" width="46" height="220" fill="currentColor" />
-      <polygon
-        points="474,102 594,0 650,0 474,150"
-        fill="currentColor"
+      <path
+        d="M 492 108 L 618 16"
+        stroke="currentColor"
+        strokeWidth="48"
+        strokeLinecap="butt"
       />
-      <polygon
-        points="474,118 474,166 588,220 650,220"
-        fill="currentColor"
+      <path
+        d="M 492 112 L 618 204"
+        stroke="currentColor"
+        strokeWidth="48"
+        strokeLinecap="butt"
       />
 
       {/* I */}
       <rect x="678" y="0" width="46" height="220" fill="currentColor" />
 
-      {/* RENT in Inter, bottom-aligned */}
+      {/* RENT in Inter, same cap height as ZEKI */}
       <text
-        x="762"
-        y="219"
+        x="790"
+        y="220"
         fill="currentColor"
         fontFamily="'Inter Variable', Inter, system-ui, sans-serif"
-        fontWeight="700"
-        fontSize="92"
-        letterSpacing="6"
+        fontWeight="800"
+        fontSize="300"
+        letterSpacing="4"
       >
         RENT
       </text>
