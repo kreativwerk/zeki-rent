@@ -38,13 +38,13 @@ export default async function AdminCustomersPage() {
             <tbody>
               {profiles.map((p) => (
                 <tr key={p.id}>
-                  <td>
+                  <td data-label="Name">
                     <strong>{p.name ?? "–"}</strong>
                   </td>
-                  <td>{p.email ?? "–"}</td>
-                  <td>{p.phone ?? "–"}</td>
-                  <td>{formatDate(p.created_at)}</td>
-                  <td>{p.bookings?.[0]?.count ?? 0}</td>
+                  <td data-label="E-Mail">{p.email ?? "–"}</td>
+                  <td data-label="Telefon">{p.phone ?? "–"}</td>
+                  <td data-label="Registriert">{formatDate(p.created_at)}</td>
+                  <td data-label="Anfragen">{p.bookings?.[0]?.count ?? 0}</td>
                 </tr>
               ))}
             </tbody>

@@ -41,19 +41,21 @@ export default async function AdminVehiclesPage() {
                 const from = cheapestPrice(v);
                 return (
                   <tr key={v.id}>
-                    <td>
+                    <td data-label="Fahrzeug">
                       <strong>{v.name}</strong>
                     </td>
-                    <td>{v.category}</td>
-                    <td>{from !== null ? `${formatEuro(from)}/Monat` : "–"}</td>
-                    <td>
+                    <td data-label="Kategorie">{v.category}</td>
+                    <td data-label="ab Preis">
+                      {from !== null ? `${formatEuro(from)}/Monat` : "–"}
+                    </td>
+                    <td data-label="Sichtbar">
                       <span
                         className={`status ${v.active ? "status-bestätigt" : "status-beendet"}`}
                       >
                         {v.active ? "online" : "versteckt"}
                       </span>
                     </td>
-                    <td>
+                    <td className="action-cell">
                       <Link
                         href={`/admin/fahrzeuge/${v.id}`}
                         className="btn-small"

@@ -36,9 +36,12 @@ export default async function AdminLayout({
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
-        <Link href="/admin" className="logo">
-          <ZekiLogo variant="letter" />
-        </Link>
+        <div className="admin-brand">
+          <Link href="/admin" className="logo">
+            <ZekiLogo variant="letter" />
+          </Link>
+          <span className="admin-pill">Admin</span>
+        </div>
         <AdminNav />
         <div className="admin-sidebar-footer">
           <Link href="/">← Zur Website</Link>

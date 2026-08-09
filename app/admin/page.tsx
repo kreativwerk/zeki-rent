@@ -1,234 +1,168 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, type Booking } from "@/lib/types";
-import BookingStatusSelect from "@/components/admin/BookingStatusSelect";
+import { formatDate } from "@/lib/types";
+import AdminIcon, { type AdminIconName } from "@/components/admin/AdminIcon";
 
-interface Prebooking {
+interface RecentRow {
   id: string;
-  model: string;
-  note: string | null;
-  status: string;
   created_at: string;
-  profiles?: CustomerRef | null;
-}
-
-interface GeneralRequest {
-  id: string;
-  vehicle_wish: string | null;
-  large_vans: Record<string, number> | null;
-  small_vans: number | null;
-  km_per_month: string | null;
-  fuel_type: string | null;
-  start_from: string | null;
-  handover: string | null;
-  note: string | null;
   status: string;
-  created_at: string;
-  profiles?: CustomerRef | null;
+  vehicles?: { name: string | null } | null;
+  profiles?: { name: string | null; company_name: string | null } | null;
 }
 
-interface CustomerRef {
-  name: string | null;
-  email: string | null;
-  phone: string | null;
-  company_name?: string | null;
-  billing_street?: string | null;
-  billing_zip?: string | null;
-  billing_city?: string | null;
-}
-
-function describeVehicles(r: GeneralRequest): string {
-  const parts: string[] = [];
-  for (const [size, count] of Object.entries(r.large_vans ?? {})) {
-    if (count > 0) parts.push(`${count}× ${size}`);
-  }
-  if (r.small_vans) parts.push(`${r.small_vans}× Kleintransporter`);
-  return parts.join(", ") || r.vehicle_wish || "–";
-}
-
-function CustomerCell({ c }: { c?: CustomerRef | null }) {
-  return (
-    <>
-      <strong>{c?.company_name ?? c?.name ?? "–"}</strong>
-      <br />
-      <span className="muted">
-        {c?.company_name ? `${c.name ?? ""} · ` : ""}
-        {c?.email}
-        {c?.phone ? ` · ${c.phone}` : ""}
-        {c?.billing_street
-          ? ` · ${c.billing_street}, ${c.billing_zip ?? ""} ${c.billing_city ?? ""}`
-          : ""}
-      </span>
-    </>
-  );
-}
-
-export default async function AdminBookingsPage() {
+export default async function AdminDashboardPage() {
   const supabase = await createClient();
-  const [{ data }, { data: prebookData }, { data: requestData }] =
-    await Promise.all([
-      supabase
-        .from("bookings")
-        .select("*, vehicles(name), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("prebookings")
-        .select("*, profiles(name, email, phone, company_name)")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("general_requests")
-        .select("*, profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
-        .order("created_at", { ascending: false }),
-    ]);
 
-  const bookings = (data ?? []) as Booking[];
-  const prebookings = (prebookData ?? []) as Prebooking[];
-  const generalRequests = (requestData ?? []) as GeneralRequest[];
-  const open = bookings.filter((b) => b.status === "neu").length;
+  const countOf = (
+    table: string,
+    filter?: { column: string; value: string; negate?: boolean }
+  ) => {
+    let q = supabase.from(table).select("id", { count: "exact", head: true });
+    if (filter) {
+      q = filter.negate
+        ? q.neq(filter.column, filter.value)
+        : q.eq(filter.column, filter.value);
+    }
+    return q;
+  };
+
+  const [
+    bookings,
+    bookingsOpen,
+    requests,
+    prebookings,
+    vehicles,
+    vehiclesActive,
+    customers,
+    tickets,
+    ticketsOpen,
+    recent,
+  ] = await Promise.all([
+    countOf("bookings"),
+    countOf("bookings", { column: "status", value: "neu" }),
+    countOf("general_requests"),
+    countOf("prebookings"),
+    countOf("vehicles"),
+    countOf("vehicles", { column: "active", value: "true" }),
+    countOf("profiles"),
+    countOf("support_tickets"),
+    countOf("support_tickets", {
+      column: "status",
+      value: "erledigt",
+      negate: true,
+    }),
+    supabase
+      .from("bookings")
+      .select("id, created_at, status, vehicles(name), profiles(name, company_name)")
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
+
+  const tiles: {
+    href: string;
+    icon: AdminIconName;
+    label: string;
+    value: number;
+    hint: string;
+    alert?: boolean;
+  }[] = [
+    {
+      href: "/admin/anfragen",
+      icon: "anfragen",
+      label: "Fahrzeuganfragen",
+      value: bookings.count ?? 0,
+      hint: `${bookingsOpen.count ?? 0} offen`,
+      alert: (bookingsOpen.count ?? 0) > 0,
+    },
+    {
+      href: "/admin/anfragen",
+      icon: "wunsch",
+      label: "Wunschfahrzeuge",
+      value: requests.count ?? 0,
+      hint: "Partnernetzwerk",
+    },
+    {
+      href: "/admin/anfragen",
+      icon: "vormerkung",
+      label: "Vormerkungen",
+      value: prebookings.count ?? 0,
+      hint: "Togg T10X & T10F",
+    },
+    {
+      href: "/admin/fahrzeuge",
+      icon: "fahrzeuge",
+      label: "Fahrzeuge",
+      value: vehicles.count ?? 0,
+      hint: `${vehiclesActive.count ?? 0} online`,
+    },
+    {
+      href: "/admin/kunden",
+      icon: "kunden",
+      label: "Kunden",
+      value: customers.count ?? 0,
+      hint: "registriert",
+    },
+    {
+      href: "/admin/support",
+      icon: "support",
+      label: "Support",
+      value: tickets.count ?? 0,
+      hint: `${ticketsOpen.count ?? 0} offen`,
+      alert: (ticketsOpen.count ?? 0) > 0,
+    },
+  ];
+
+  const recentRows = (recent.data ?? []) as unknown as RecentRow[];
 
   return (
     <>
       <div className="admin-page-header">
-        <h1>Anfragen</h1>
-        <p>
-          {bookings.length} gesamt · {open} offen
-        </p>
+        <h1>Übersicht</h1>
+        <p>Alles Wichtige auf einen Blick</p>
       </div>
 
-      {bookings.length === 0 ? (
+      <div className="dash-grid">
+        {tiles.map((t) => (
+          <Link key={t.label} href={t.href} className="dash-tile">
+            <span className="dash-icon">
+              <AdminIcon name={t.icon} />
+            </span>
+            <span className="dash-value">{t.value}</span>
+            <span className="dash-label">{t.label}</span>
+            <span className={`dash-hint${t.alert ? " dash-hint-alert" : ""}`}>
+              {t.hint}
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      <h2 className="admin-section-title">Zuletzt eingegangen</h2>
+      {recentRows.length === 0 ? (
         <div className="card">
           <p className="empty-state">Noch keine Anfragen eingegangen.</p>
         </div>
       ) : (
-        <div className="card table-card">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Eingang</th>
-                <th>Kunde</th>
-                <th>Fahrzeug</th>
-                <th>Zeitraum</th>
-                <th>Kilometer</th>
-                <th>Anmerkung</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.map((b) => (
-                <tr key={b.id}>
-                  <td>{formatDate(b.created_at)}</td>
-                  <td>
-                    <CustomerCell c={b.profiles as CustomerRef | null} />
-                  </td>
-                  <td>{b.vehicles?.name ?? "–"}</td>
-                  <td>
-                    ab {formatDate(b.start_date)}
-                    <br />
-                    <span className="muted">
-                      {b.duration_months}{" "}
-                      {b.duration_months === 1 ? "Monat" : "Monate"}
-                    </span>
-                  </td>
-                  <td>
-                    {b.km_package}
-                    <br />
-                    <span className="muted">{b.handover ?? "Abholung"}</span>
-                  </td>
-                  <td className="note-cell">{b.note ?? "–"}</td>
-                  <td>
-                    <BookingStatusSelect id={b.id} status={b.status} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <div className="admin-page-header" style={{ marginTop: "2rem" }}>
-        <h1>Allgemeine Anfragen</h1>
-        <p>{generalRequests.length} gesamt</p>
-      </div>
-
-      {generalRequests.length === 0 ? (
         <div className="card">
-          <p className="empty-state">Noch keine allgemeinen Anfragen.</p>
-        </div>
-      ) : (
-        <div className="card table-card">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Datum</th>
-                <th>Kunde</th>
-                <th>Fahrzeuge</th>
-                <th>Details</th>
-                <th>Anmerkung</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {generalRequests.map((r) => (
-                <tr key={r.id}>
-                  <td>{formatDate(r.created_at)}</td>
-                  <td>
-                    <CustomerCell c={r.profiles} />
-                  </td>
-                  <td>
-                    <strong>{describeVehicles(r)}</strong>
-                  </td>
-                  <td className="muted">
-                    {[r.km_per_month, r.fuel_type, r.start_from, r.handover]
-                      .filter(Boolean)
-                      .join(" · ") || "–"}
-                  </td>
-                  <td className="note-cell">{r.note ?? "–"}</td>
-                  <td>
-                    <span className="status status-neu">{r.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <div className="admin-page-header" style={{ marginTop: "2rem" }}>
-        <h1>Vormerkungen</h1>
-        <p>{prebookings.length} gesamt</p>
-      </div>
-
-      {prebookings.length === 0 ? (
-        <div className="card">
-          <p className="empty-state">Noch keine Vormerkungen.</p>
-        </div>
-      ) : (
-        <div className="card table-card">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Datum</th>
-                <th>Kunde</th>
-                <th>Fahrzeug</th>
-                <th>Anmerkung</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prebookings.map((pb) => (
-                <tr key={pb.id}>
-                  <td>{formatDate(pb.created_at)}</td>
-                  <td>
-                    <CustomerCell c={pb.profiles as CustomerRef | null} />
-                  </td>
-                  <td>{pb.model}</td>
-                  <td className="note-cell">{pb.note ?? "–"}</td>
-                  <td>
-                    <span className="status status-neu">{pb.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul className="recent-list">
+            {recentRows.map((r) => (
+              <li key={r.id}>
+                <div className="recent-main">
+                  <strong>
+                    {r.profiles?.company_name ?? r.profiles?.name ?? "Kunde"}
+                  </strong>
+                  <span className="muted">
+                    {r.vehicles?.name ?? "Fahrzeug"} ·{" "}
+                    {formatDate(r.created_at)}
+                  </span>
+                </div>
+                <span className={`status status-${r.status}`}>{r.status}</span>
+              </li>
+            ))}
+          </ul>
+          <Link href="/admin/anfragen" className="recent-more">
+            Alle Anfragen ansehen →
+          </Link>
         </div>
       )}
     </>
