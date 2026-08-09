@@ -38,7 +38,7 @@ export default async function AdminLayout({
       <aside className="admin-sidebar">
         <div className="admin-brand">
           <Link href="/admin" className="logo">
-            <ZekiLogo variant="letter" />
+            <ZekiLogo />
           </Link>
           <span className="admin-pill">Admin</span>
         </div>

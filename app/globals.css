@@ -2712,20 +2712,6 @@ a.fleet-tile:hover {
   height: 2.1rem;
 }
 
-.zeki-logo-full {
-  height: 2.4rem;
-}
-
-.site-footer .zeki-logo-full {
-  height: 2rem;
-}
-
-@media (max-width: 480px) {
-  .topbar-inner .zeki-logo-full {
-    height: 1.7rem;
-  }
-}
-
 /* Fleet grid fits three tiles */
 .fleet-duo {
   grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
@@ -2852,13 +2838,44 @@ a.fleet-tile:hover {
   font-variant-numeric: tabular-nums;
 }
 
-/* Larger logo now that the sign-in button is gone */
-.zeki-logo-full {
-  height: 3rem;
+/* Wortmarke: breites Seitenverhältnis, Höhe je Kontext */
+.topbar-inner .zeki-logo {
+  height: 2.6rem;
+}
+
+@media (max-width: 900px) {
+  .topbar-inner .zeki-logo {
+    height: 2.1rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .topbar-inner .zeki-logo-full {
-    height: 2.4rem;
+  .topbar-inner .zeki-logo {
+    height: 1.7rem;
+  }
+}
+
+.site-footer .zeki-logo {
+  height: 1.6rem;
+}
+
+/* Adminmenü: Logo und Admin-Pille untereinander in der schmalen Sidebar */
+.admin-sidebar .zeki-logo {
+  height: 1.3rem;
+}
+
+.admin-brand {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .admin-brand {
+    flex-direction: row;
+    align-items: center;
+  }
+  .admin-sidebar .zeki-logo {
+    height: 1.5rem;
   }
 }
