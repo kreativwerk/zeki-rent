@@ -2840,23 +2840,23 @@ a.fleet-tile:hover {
 
 /* Wortmarke: breites Seitenverhältnis, Höhe je Kontext */
 .topbar-inner .zeki-logo {
-  height: 1.9rem;
+  height: 1.5rem;
 }
 
 @media (max-width: 900px) {
   .topbar-inner .zeki-logo {
-    height: 1.6rem;
+    height: 1.3rem;
   }
 }
 
 @media (max-width: 480px) {
   .topbar-inner .zeki-logo {
-    height: 1.35rem;
+    height: 1.1rem;
   }
 }
 
 .site-footer .zeki-logo {
-  height: 1.35rem;
+  height: 1.15rem;
 }
 
 /* Adminmenü: Logo und Admin-Pille untereinander in der schmalen Sidebar */
