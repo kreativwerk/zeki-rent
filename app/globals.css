@@ -2840,28 +2840,28 @@ a.fleet-tile:hover {
 
 /* Wortmarke: breites Seitenverhältnis, Höhe je Kontext */
 .topbar-inner .zeki-logo {
-  height: 2.6rem;
+  height: 1.9rem;
 }
 
 @media (max-width: 900px) {
   .topbar-inner .zeki-logo {
-    height: 2.1rem;
+    height: 1.6rem;
   }
 }
 
 @media (max-width: 480px) {
   .topbar-inner .zeki-logo {
-    height: 1.7rem;
+    height: 1.35rem;
   }
 }
 
 .site-footer .zeki-logo {
-  height: 1.6rem;
+  height: 1.35rem;
 }
 
 /* Adminmenü: Logo und Admin-Pille untereinander in der schmalen Sidebar */
 .admin-sidebar .zeki-logo {
-  height: 1.3rem;
+  height: 1.1rem;
 }
 
 .admin-brand {
@@ -2876,6 +2876,6 @@ a.fleet-tile:hover {
     align-items: center;
   }
   .admin-sidebar .zeki-logo {
-    height: 1.5rem;
+    height: 1.25rem;
   }
 }
