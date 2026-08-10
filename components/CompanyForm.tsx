@@ -18,6 +18,9 @@ export default function CompanyForm({
   onSaved?: () => void;
 }) {
   const router = useRouter();
+  const [customerType, setCustomerType] = useState(
+    initial?.customer_type === "privat" ? "privat" : "gewerblich"
+  );
   const [company, setCompany] = useState(initial?.company_name ?? "");
   const [street, setStreet] = useState(initial?.billing_street ?? "");
   const [zip, setZip] = useState(initial?.billing_zip ?? "");
@@ -33,8 +36,14 @@ export default function CompanyForm({
   const [savedHint, setSavedHint] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const business = customerType === "gewerblich";
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (business && !company.trim()) {
+      setError("Bitte tragen Sie Ihren Firmennamen ein.");
+      return;
+    }
     if (!deliverySame && (!dStreet.trim() || !dZip.trim() || !dCity.trim())) {
       setError("Bitte geben Sie die abweichende Lieferadresse vollständig an.");
       return;
@@ -45,7 +54,8 @@ export default function CompanyForm({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        company_name: company,
+        customer_type: customerType,
+        company_name: business ? company : "",
         billing_street: street,
         billing_zip: zip,
         billing_city: city,
@@ -71,17 +81,39 @@ export default function CompanyForm({
   return (
     <form onSubmit={submit}>
       <div className="field">
-        <label className="field-label" htmlFor="c-name">
-          Firmenname <span className="required-star">*</span>
-        </label>
-        <input
-          id="c-name"
-          type="text"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          required
-        />
+        <label className="field-label">Kundentyp</label>
+        <div className="choice-pills">
+          <button
+            type="button"
+            className={`pill ${business ? "pill-active" : ""}`}
+            onClick={() => setCustomerType("gewerblich")}
+          >
+            Firma / Gewerbe
+          </button>
+          <button
+            type="button"
+            className={`pill ${!business ? "pill-active" : ""}`}
+            onClick={() => setCustomerType("privat")}
+          >
+            Privatperson
+          </button>
+        </div>
       </div>
+
+      {business && (
+        <div className="field">
+          <label className="field-label" htmlFor="c-name">
+            Firmenname <span className="required-star">*</span>
+          </label>
+          <input
+            id="c-name"
+            type="text"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            required
+          />
+        </div>
+      )}
 
       <div className="field">
         <label className="field-label" htmlFor="c-street">

@@ -27,6 +27,8 @@ export default async function AdminDashboardPage() {
     return q;
   };
 
+  const todayIso = new Date().toISOString().slice(0, 10);
+
   const [
     bookings,
     bookingsOpen,
@@ -37,6 +39,7 @@ export default async function AdminDashboardPage() {
     customers,
     tickets,
     ticketsOpen,
+    assignmentsActive,
     recent,
   ] = await Promise.all([
     countOf("bookings"),
@@ -45,13 +48,20 @@ export default async function AdminDashboardPage() {
     countOf("prebookings"),
     countOf("vehicles"),
     countOf("vehicles", { column: "active", value: "true" }),
-    countOf("profiles"),
+    // customer_profiles blendet Adminkonten aus
+    countOf("customer_profiles"),
     countOf("support_tickets"),
     countOf("support_tickets", {
       column: "status",
       value: "erledigt",
       negate: true,
     }),
+    supabase
+      .from("assignments")
+      .select("id", { count: "exact", head: true })
+      .neq("status", "storniert")
+      .lte("start_date", todayIso)
+      .gte("end_date", todayIso),
     supabase
       .from("bookings")
       .select("id, created_at, status, vehicles(name), profiles(name, company_name)")
@@ -81,6 +91,13 @@ export default async function AdminDashboardPage() {
       label: "Wunschfahrzeuge",
       value: requests.count ?? 0,
       hint: "Partnernetzwerk",
+    },
+    {
+      href: "/admin/buchungen",
+      icon: "buchungen",
+      label: "Buchungsplan",
+      value: assignmentsActive.count ?? 0,
+      hint: "aktuell unterwegs",
     },
     {
       href: "/admin/anfragen",

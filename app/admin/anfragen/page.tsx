@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, type Booking } from "@/lib/types";
 import BookingStatusSelect from "@/components/admin/BookingStatusSelect";
@@ -117,6 +118,7 @@ export default async function AdminRequestsPage() {
                 <th>Kilometer</th>
                 <th>Anmerkung</th>
                 <th>Status</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -148,6 +150,14 @@ export default async function AdminRequestsPage() {
                   <td data-label="Status">
                     <BookingStatusSelect id={b.id} status={b.status} />
                   </td>
+                  <td className="action-cell">
+                    <Link
+                      href={`/admin/buchungen/neu?booking=${b.id}`}
+                      className="btn-small"
+                    >
+                      Einplanen
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -174,6 +184,7 @@ export default async function AdminRequestsPage() {
                 <th>Details</th>
                 <th>Anmerkung</th>
                 <th>Status</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -196,6 +207,14 @@ export default async function AdminRequestsPage() {
                   </td>
                   <td data-label="Status">
                     <span className="status status-neu">{r.status}</span>
+                  </td>
+                  <td className="action-cell">
+                    <Link
+                      href={`/admin/buchungen/neu?request=${r.id}`}
+                      className="btn-small"
+                    >
+                      Einplanen
+                    </Link>
                   </td>
                 </tr>
               ))}

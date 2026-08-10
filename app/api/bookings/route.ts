@@ -7,6 +7,7 @@ import {
   notifyOwner,
   sendEmail,
 } from "@/lib/email";
+import { isCompanyComplete } from "@/lib/company";
 
 const VALID_DURATIONS = [1, 3, 6, 12, 24];
 
@@ -43,15 +44,10 @@ export async function POST(request: Request) {
 
   const { data: profileCheck } = await supabase
     .from("profiles")
-    .select("company_name, billing_street, billing_zip, billing_city")
+    .select("customer_type, company_name, billing_street, billing_zip, billing_city, vat_id, delivery_same, delivery_street, delivery_zip, delivery_city")
     .eq("id", user.id)
     .single();
-  if (
-    !profileCheck?.company_name ||
-    !profileCheck?.billing_street ||
-    !profileCheck?.billing_zip ||
-    !profileCheck?.billing_city
-  ) {
+  if (!isCompanyComplete(profileCheck)) {
     return NextResponse.json(
       { ok: false, reason: "company_data_missing" },
       { status: 422 }
@@ -81,7 +77,7 @@ export async function POST(request: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, phone, email, company_name, billing_street, billing_zip, billing_city, delivery_same, delivery_street, delivery_zip, delivery_city")
+    .select("name, phone, email, customer_type, company_name, billing_street, billing_zip, billing_city, delivery_same, delivery_street, delivery_zip, delivery_city")
     .eq("id", user.id)
     .single();
 

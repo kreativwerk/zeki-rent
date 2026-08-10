@@ -99,7 +99,7 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
     if (!vehicle) return;
     if (
       !confirm(
-        "Fahrzeug wirklich löschen? Zugehörige Anfragen werden mit gelöscht. Alternativ können Sie es nur verstecken (Haken bei „Auf der Website sichtbar“ entfernen)."
+        `„${vehicle.name}“ wirklich löschen? Einplanungen für dieses Fahrzeug werden entfernt. Bisherige Kundenanfragen bleiben erhalten, verlieren aber die Fahrzeugzuordnung. Alternativ können Sie es nur verstecken (Haken bei „Auf der Website sichtbar“ entfernen).`
       )
     )
       return;
@@ -109,7 +109,8 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
       .delete()
       .eq("id", vehicle.id);
     if (dbError) {
-      setError("Löschen fehlgeschlagen.");
+      console.error(dbError);
+      setError("Löschen fehlgeschlagen: " + dbError.message);
       setSaving(false);
       return;
     }

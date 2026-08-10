@@ -19,7 +19,7 @@ export interface Vehicle {
 export interface Booking {
   id: string;
   user_id: string;
-  vehicle_id: string;
+  vehicle_id: string | null;
   start_date: string;
   duration_months: number;
   km_package: string;
@@ -31,6 +31,32 @@ export interface Booking {
   profiles?: Pick<Profile, "name" | "email" | "phone"> | null;
 }
 
+export type CustomerType = "privat" | "gewerblich";
+
+export interface Assignment {
+  id: string;
+  vehicle_id: string;
+  user_id: string | null;
+  booking_id: string | null;
+  request_id: string | null;
+  start_date: string;
+  end_date: string;
+  note: string | null;
+  status: AssignmentStatus;
+  created_at: string;
+  vehicles?: Pick<Vehicle, "name"> | null;
+  profiles?: Pick<Profile, "name" | "company_name" | "email" | "phone"> | null;
+}
+
+export type AssignmentStatus = "geplant" | "aktiv" | "beendet" | "storniert";
+
+export const ASSIGNMENT_STATUSES: AssignmentStatus[] = [
+  "geplant",
+  "aktiv",
+  "beendet",
+  "storniert",
+];
+
 export interface Profile {
   id: string;
   name: string | null;
@@ -38,6 +64,7 @@ export interface Profile {
   phone: string | null;
   consent_at: string | null;
   created_at: string;
+  customer_type: CustomerType;
   company_name: string | null;
   billing_street: string | null;
   billing_zip: string | null;

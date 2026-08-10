@@ -1,16 +1,26 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, type Profile } from "@/lib/types";
+import type { Profile } from "@/lib/types";
 
-type ProfileRow = Profile & { bookings: { count: number }[] };
+type CustomerRow = Pick<
+  Profile,
+  "id" | "name" | "company_name" | "customer_type" | "created_at"
+>;
+
+function displayName(p: CustomerRow): string {
+  if (p.customer_type === "gewerblich" && p.company_name) return p.company_name;
+  return p.name ?? "Ohne Namen";
+}
 
 export default async function AdminCustomersPage() {
   const supabase = await createClient();
+  // customer_profiles blendet Adminkonten aus
   const { data } = await supabase
-    .from("profiles")
-    .select("*, bookings(count)")
+    .from("customer_profiles")
+    .select("id, name, company_name, customer_type, created_at")
     .order("created_at", { ascending: false });
 
-  const profiles = (data ?? []) as ProfileRow[];
+  const profiles = (data ?? []) as CustomerRow[];
 
   return (
     <>
@@ -24,31 +34,22 @@ export default async function AdminCustomersPage() {
           <p className="empty-state">Noch keine registrierten Kunden.</p>
         </div>
       ) : (
-        <div className="card table-card">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>E-Mail</th>
-                <th>Telefon</th>
-                <th>Registriert</th>
-                <th>Anfragen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {profiles.map((p) => (
-                <tr key={p.id}>
-                  <td data-label="Name">
-                    <strong>{p.name ?? "–"}</strong>
-                  </td>
-                  <td data-label="E-Mail">{p.email ?? "–"}</td>
-                  <td data-label="Telefon">{p.phone ?? "–"}</td>
-                  <td data-label="Registriert">{formatDate(p.created_at)}</td>
-                  <td data-label="Anfragen">{p.bookings?.[0]?.count ?? 0}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="card">
+          <ul className="customer-list">
+            {profiles.map((p) => (
+              <li key={p.id}>
+                <Link href={`/admin/kunden/${p.id}`}>
+                  <span className="customer-name">{displayName(p)}</span>
+                  <span className="customer-meta">
+                    {p.customer_type === "privat" ? "Privat" : "Gewerblich"}
+                  </span>
+                  <span className="customer-chevron" aria-hidden>
+                    ›
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </>

@@ -44,7 +44,6 @@ export default async function AdminLayout({
         </div>
         <AdminNav />
         <div className="admin-sidebar-footer">
-          <Link href="/">← Zur Website</Link>
           <LogoutButton />
         </div>
       </aside>

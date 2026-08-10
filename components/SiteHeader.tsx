@@ -34,7 +34,7 @@ export default async function SiteHeader() {
               Admin
             </Link>
           )}
-          {user && (
+          {user && !isAdmin && (
             <Link href="/konto" className="btn-small btn-small-secondary">
               Mein Konto
             </Link>

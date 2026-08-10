@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { emailLayout, notifyOwner, sendEmail } from "@/lib/email";
+import { isCompanyComplete } from "@/lib/company";
 
 interface RequestBody {
   large_vans?: Record<string, number>;
@@ -54,16 +55,11 @@ export async function POST(request: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, phone, email, company_name, billing_street, billing_zip, billing_city, delivery_same, delivery_street, delivery_zip, delivery_city")
+    .select("name, phone, email, customer_type, company_name, billing_street, billing_zip, billing_city, delivery_same, delivery_street, delivery_zip, delivery_city")
     .eq("id", user.id)
     .single();
 
-  if (
-    !profile?.company_name ||
-    !profile?.billing_street ||
-    !profile?.billing_zip ||
-    !profile?.billing_city
-  ) {
+  if (!isCompanyComplete(profile)) {
     return NextResponse.json(
       { ok: false, reason: "company_data_missing" },
       { status: 422 }

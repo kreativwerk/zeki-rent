@@ -41,7 +41,7 @@ export default async function VehiclePage(props: {
       const { data: profile } = await supabase
         .from("profiles")
         .select(
-          "company_name, billing_street, billing_zip, billing_city, vat_id, delivery_same, delivery_street, delivery_zip, delivery_city"
+          "customer_type, company_name, billing_street, billing_zip, billing_city, vat_id, delivery_same, delivery_street, delivery_zip, delivery_city"
         )
         .eq("id", user.id)
         .maybeSingle();

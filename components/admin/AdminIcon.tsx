@@ -3,6 +3,7 @@ export type AdminIconName =
   | "anfragen"
   | "wunsch"
   | "vormerkung"
+  | "buchungen"
   | "fahrzeuge"
   | "kunden"
   | "support";
@@ -19,6 +20,9 @@ const PATHS: Record<AdminIconName, string> = {
     "m12 2 1.8 4.2L18 8l-4.2 1.8L12 14l-1.8-4.2L6 8l4.2-1.8L12 2Zm6 10 1 2.3 2.3 1-2.3 1-1 2.3-1-2.3-2.3-1 2.3-1 1-2.3ZM6 13l1.2 2.8L10 17l-2.8 1.2L6 21l-1.2-2.8L2 17l2.8-1.2L6 13Z",
   // bookmark
   vormerkung: "M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2Z",
+  // calendar
+  buchungen:
+    "M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 16H5V10h14v10Zm0-12H5V6h14v2ZM7 12h5v5H7v-5Z",
   // van
   fahrzeuge:
     "M3 6h11a2 2 0 0 1 2 2v1h2.1a2 2 0 0 1 1.7 1l1.9 3.1a2 2 0 0 1 .3 1V17h-2.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H2V8a2 2 0 0 1 1-2Zm13 5h4l-1.5-2.4a.5.5 0 0 0-.4-.2H16v2.6ZM7 16.5A1.5 1.5 0 1 0 7 19.5a1.5 1.5 0 0 0 0-3Zm10 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z",

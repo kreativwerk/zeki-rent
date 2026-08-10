@@ -72,19 +72,65 @@ export function LoginForm({ next }: { next: string }) {
   );
 }
 
+function PillChoice({
+  options,
+  value,
+  onChange,
+}: {
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="choice-pills">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          className={value === o.value ? "pill pill-active" : "pill"}
+          aria-pressed={value === o.value}
+          onClick={() => onChange(o.value)}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function RegisterForm({ next }: { next: string }) {
   const router = useRouter();
+  const [customerType, setCustomerType] = useState("gewerblich");
   const [name, setName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [vatId, setVatId] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [billingStreet, setBillingStreet] = useState("");
+  const [billingZip, setBillingZip] = useState("");
+  const [billingCity, setBillingCity] = useState("");
+  const [deliverySame, setDeliverySame] = useState(true);
+  const [deliveryStreet, setDeliveryStreet] = useState("");
+  const [deliveryZip, setDeliveryZip] = useState("");
+  const [deliveryCity, setDeliveryCity] = useState("");
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [confirmHint, setConfirmHint] = useState(false);
 
+  const business = customerType === "gewerblich";
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (business && !companyName.trim()) {
+      setError("Bitte tragen Sie Ihren Firmennamen ein.");
+      return;
+    }
+    if (!deliverySame && (!deliveryStreet.trim() || !deliveryZip.trim() || !deliveryCity.trim())) {
+      setError("Bitte vervollständigen Sie die abweichende Lieferadresse.");
+      return;
+    }
     if (!consent) {
       setError("Bitte stimmen Sie der Datenverarbeitung zu.");
       return;
@@ -96,7 +142,21 @@ export function RegisterForm({ next }: { next: string }) {
       email,
       password,
       options: {
-        data: { name, phone, consent: "true" },
+        data: {
+          name,
+          phone,
+          consent: "true",
+          customer_type: customerType,
+          company_name: business ? companyName.trim() : "",
+          vat_id: business ? vatId.trim() : "",
+          billing_street: billingStreet.trim(),
+          billing_zip: billingZip.trim(),
+          billing_city: billingCity.trim(),
+          delivery_same: deliverySame,
+          delivery_street: deliverySame ? "" : deliveryStreet.trim(),
+          delivery_zip: deliverySame ? "" : deliveryZip.trim(),
+          delivery_city: deliverySame ? "" : deliveryCity.trim(),
+        },
         // Confirmation link returns to the live site, not localhost
         emailRedirectTo: `${window.location.origin}/login`,
       },
@@ -138,8 +198,50 @@ export function RegisterForm({ next }: { next: string }) {
   return (
     <form onSubmit={submit} className="auth-form">
       <div className="field">
+        <span className="field-label">Ich melde mich an als</span>
+        <PillChoice
+          value={customerType}
+          onChange={setCustomerType}
+          options={[
+            { value: "gewerblich", label: "Firma / Gewerbe" },
+            { value: "privat", label: "Privatperson" },
+          ]}
+        />
+      </div>
+
+      {business && (
+        <>
+          <div className="field">
+            <label className="field-label" htmlFor="company">
+              Firmenname
+            </label>
+            <input
+              id="company"
+              type="text"
+              autoComplete="organization"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="field">
+            <label className="field-label" htmlFor="vat">
+              USt-IdNr. <span className="hint">optional</span>
+            </label>
+            <input
+              id="vat"
+              type="text"
+              value={vatId}
+              onChange={(e) => setVatId(e.target.value)}
+              placeholder="DE123456789"
+            />
+          </div>
+        </>
+      )}
+
+      <div className="field">
         <label className="field-label" htmlFor="name">
-          Vor- und Nachname
+          {business ? "Ansprechpartner" : "Vor- und Nachname"}
         </label>
         <input
           id="name"
@@ -190,6 +292,107 @@ export function RegisterForm({ next }: { next: string }) {
           required
         />
       </div>
+
+      <h3 className="auth-section">Rechnungsanschrift</h3>
+      <div className="field">
+        <label className="field-label" htmlFor="b-street">
+          Straße und Hausnummer
+        </label>
+        <input
+          id="b-street"
+          type="text"
+          autoComplete="street-address"
+          value={billingStreet}
+          onChange={(e) => setBillingStreet(e.target.value)}
+          required
+        />
+      </div>
+      <div className="form-row">
+        <div className="field">
+          <label className="field-label" htmlFor="b-zip">
+            PLZ
+          </label>
+          <input
+            id="b-zip"
+            type="text"
+            inputMode="numeric"
+            autoComplete="postal-code"
+            value={billingZip}
+            onChange={(e) => setBillingZip(e.target.value)}
+            required
+          />
+        </div>
+        <div className="field">
+          <label className="field-label" htmlFor="b-city">
+            Ort
+          </label>
+          <input
+            id="b-city"
+            type="text"
+            autoComplete="address-level2"
+            value={billingCity}
+            onChange={(e) => setBillingCity(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="field">
+        <span className="field-label">Lieferadresse</span>
+        <PillChoice
+          value={deliverySame ? "same" : "other"}
+          onChange={(v) => setDeliverySame(v === "same")}
+          options={[
+            { value: "same", label: "Wie Rechnungsadresse" },
+            { value: "other", label: "Abweichende Adresse" },
+          ]}
+        />
+      </div>
+
+      {!deliverySame && (
+        <>
+          <div className="field">
+            <label className="field-label" htmlFor="d-street">
+              Straße und Hausnummer
+            </label>
+            <input
+              id="d-street"
+              type="text"
+              value={deliveryStreet}
+              onChange={(e) => setDeliveryStreet(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-row">
+            <div className="field">
+              <label className="field-label" htmlFor="d-zip">
+                PLZ
+              </label>
+              <input
+                id="d-zip"
+                type="text"
+                inputMode="numeric"
+                value={deliveryZip}
+                onChange={(e) => setDeliveryZip(e.target.value)}
+                required
+              />
+            </div>
+            <div className="field">
+              <label className="field-label" htmlFor="d-city">
+                Ort
+              </label>
+              <input
+                id="d-city"
+                type="text"
+                value={deliveryCity}
+                onChange={(e) => setDeliveryCity(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+        </>
+      )}
+
       <label className="consent-row">
         <input
           type="checkbox"

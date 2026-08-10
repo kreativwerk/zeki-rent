@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   let body: {
+    customer_type?: string;
     company_name?: string;
     billing_street?: string;
     billing_zip?: string;
@@ -19,12 +20,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const required = [
-    body.company_name,
-    body.billing_street,
-    body.billing_zip,
-    body.billing_city,
-  ];
+  const customerType = body.customer_type === "privat" ? "privat" : "gewerblich";
+  const required = [body.billing_street, body.billing_zip, body.billing_city];
+  if (customerType === "gewerblich") required.push(body.company_name);
   if (required.some((v) => !v?.trim())) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
@@ -48,7 +46,9 @@ export async function POST(request: Request) {
   const { error } = await supabase
     .from("profiles")
     .update({
-      company_name: body.company_name!.trim(),
+      customer_type: customerType,
+      company_name:
+        customerType === "gewerblich" ? body.company_name!.trim() : null,
       billing_street: body.billing_street!.trim(),
       billing_zip: body.billing_zip!.trim(),
       billing_city: body.billing_city!.trim(),
