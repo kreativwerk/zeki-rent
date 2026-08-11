@@ -86,12 +86,12 @@ export function bookingSummaryHtml(b: {
     ["Laufzeit", `${b.durationMonths} ${b.durationMonths === 1 ? "Monat" : "Monate"}`],
     ["Kilometerpaket", b.kmPackage],
   ];
-  if (b.monthlyPrice !== null) {
-    rows.push([
-      "Monatsrate",
-      `${new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(b.monthlyPrice)} zzgl. Kilometerpaket`,
-    ]);
-  }
+  rows.push([
+    "Monatsrate",
+    b.monthlyPrice !== null
+      ? `${new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(b.monthlyPrice)} zzgl. Kilometerpaket`
+      : "Auf Anfrage, wir melden uns mit Ihrem Angebot",
+  ]);
   if (b.handover) rows.push(["Übergabe", b.handover]);
   if (b.note) rows.push(["Ihre Anmerkung", b.note]);
   return `<div style="background:#f2f2f7;border-radius:12px;padding:4px 16px;margin:16px 0;">

@@ -26,6 +26,7 @@ type FormState = {
   price_6m: string;
   price_12m: string;
   price_24m: string;
+  price_on_request: boolean;
   active: boolean;
   notes: string;
 };
@@ -43,6 +44,7 @@ function toForm(v?: Vehicle): FormState {
     price_6m: v?.price_6m?.toString() ?? "",
     price_12m: v?.price_12m?.toString() ?? "",
     price_24m: v?.price_24m?.toString() ?? "",
+    price_on_request: v?.price_on_request ?? false,
     active: v?.active ?? true,
     notes: v?.notes ?? "",
   };
@@ -79,6 +81,7 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
       price_6m: num(form.price_6m),
       price_12m: num(form.price_12m),
       price_24m: num(form.price_24m),
+      price_on_request: form.price_on_request,
       active: form.active,
       notes: form.notes.trim() || null,
     };
@@ -190,8 +193,27 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
         />
       </div>
 
+      <label className="consent-row">
+        <input
+          type="checkbox"
+          checked={form.price_on_request}
+          onChange={(e) => set("price_on_request", e.target.checked)}
+        />
+        <span>
+          Preis auf Anfrage – auf der Website werden keine Raten gezeigt, die
+          Konditionen werden individuell besprochen
+        </span>
+      </label>
+
       <div className="field">
-        <label className="field-label">Monatsraten in € (leer = Laufzeit nicht buchbar)</label>
+        <label className="field-label">
+          Monatsraten in € (leer = Laufzeit nicht buchbar)
+          {form.price_on_request && (
+            <span className="hint">
+              nur intern, wird auf der Website nicht angezeigt
+            </span>
+          )}
+        </label>
         <div className="price-inputs">
           {(
             [

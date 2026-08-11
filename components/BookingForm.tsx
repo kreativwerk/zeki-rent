@@ -104,7 +104,8 @@ export default function BookingForm({
         <div className="duration-pills">
           {DURATIONS.map((m) => {
             const p = priceFor(vehicle, m);
-            if (p === null) return null;
+            // Ohne Preisangabe alle Laufzeiten anbieten, sonst nur die mit Rate
+            if (p === null && !vehicle.price_on_request) return null;
             return (
               <button
                 key={m}
@@ -113,7 +114,7 @@ export default function BookingForm({
                 onClick={() => setDuration(m)}
               >
                 {m} {m === 1 ? "Monat" : "Monate"}
-                <span>{formatEuro(p)}/M.</span>
+                {p !== null && <span>{formatEuro(p)}/M.</span>}
               </button>
             );
           })}
@@ -177,10 +178,15 @@ export default function BookingForm({
         />
       </div>
 
-      {price !== null && (
+      {price !== null ? (
         <p className="booking-total">
           Monatsrate: <strong>{formatEuro(price)}</strong>
           <span> zzgl. Kilometerpaket</span>
+        </p>
+      ) : (
+        <p className="booking-total">
+          <strong>Preis auf Anfrage</strong>
+          <span> Wir melden uns mit Ihrem persönlichen Angebot</span>
         </p>
       )}
 

@@ -96,9 +96,13 @@ export default async function Home() {
                     {[v.transmission, v.load_volume].filter(Boolean).join(" · ")}
                   </p>
                   <div className="fleet-tile-foot">
-                    {from !== null && (
+                    {from !== null ? (
                       <span className="fleet-tile-price">
                         ab <strong>{formatEuro(from)}</strong>/Monat
+                      </span>
+                    ) : (
+                      <span className="fleet-tile-price">
+                        <strong>Preis auf Anfrage</strong>
                       </span>
                     )}
                     <span className="fleet-tile-cta">Jetzt anfragen</span>

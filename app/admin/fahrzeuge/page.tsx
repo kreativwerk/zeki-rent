@@ -46,7 +46,11 @@ export default async function AdminVehiclesPage() {
                     </td>
                     <td data-label="Kategorie">{v.category}</td>
                     <td data-label="ab Preis">
-                      {from !== null ? `${formatEuro(from)}/Monat` : "–"}
+                      {v.price_on_request
+                        ? "auf Anfrage"
+                        : from !== null
+                          ? `${formatEuro(from)}/Monat`
+                          : "–"}
                     </td>
                     <td data-label="Sichtbar">
                       <span

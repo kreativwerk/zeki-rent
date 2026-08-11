@@ -11,6 +11,8 @@ export interface Vehicle {
   price_6m: number | null;
   price_12m: number | null;
   price_24m: number | null;
+  /** Keine Preise auf der Website zeigen, Konditionen kommen auf Anfrage */
+  price_on_request: boolean;
   active: boolean;
   notes: string | null;
   created_at: string;
@@ -95,6 +97,7 @@ export const KM_PACKAGES = [
 ];
 
 export function priceFor(vehicle: Vehicle, months: number): number | null {
+  if (vehicle.price_on_request) return null;
   switch (months) {
     case 1:
       return vehicle.price_1m;
@@ -112,6 +115,7 @@ export function priceFor(vehicle: Vehicle, months: number): number | null {
 }
 
 export function cheapestPrice(vehicle: Vehicle): number | null {
+  if (vehicle.price_on_request) return null;
   const prices = [
     vehicle.price_1m,
     vehicle.price_3m,

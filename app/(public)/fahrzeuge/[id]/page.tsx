@@ -68,29 +68,46 @@ export default async function VehiclePage(props: {
           </ul>
           {vehicle.notes && <p className="vehicle-notes">{vehicle.notes}</p>}
 
-          <h2>Monatsraten</h2>
-          <table className="price-table">
-            <tbody>
-              {DURATIONS.map((m) => {
-                const p = priceFor(vehicle, m);
-                if (p === null) return null;
-                return (
-                  <tr key={m}>
-                    <td>
-                      {m} {m === 1 ? "Monat" : "Monate"}
-                    </td>
-                    <td>
-                      <strong>{formatEuro(p)}</strong>/Monat
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <p className="fine-print">
-            Zzgl. Kilometerpaket. Kaution 1.000 €, Vollkasko mit 1.000 €
-            Selbstbeteiligung inklusive.
-          </p>
+          {vehicle.price_on_request ? (
+            <>
+              <h2>Konditionen</h2>
+              <p className="vehicle-notes">
+                Die Monatsrate stimmen wir individuell mit Ihnen ab, passend zu
+                Laufzeit und Kilometerpaket. Senden Sie uns einfach eine
+                unverbindliche Anfrage, wir melden uns mit Ihrem Angebot.
+              </p>
+              <p className="fine-print">
+                Kaution 1.000 €, Vollkasko mit 1.000 € Selbstbeteiligung
+                inklusive.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2>Monatsraten</h2>
+              <table className="price-table">
+                <tbody>
+                  {DURATIONS.map((m) => {
+                    const p = priceFor(vehicle, m);
+                    if (p === null) return null;
+                    return (
+                      <tr key={m}>
+                        <td>
+                          {m} {m === 1 ? "Monat" : "Monate"}
+                        </td>
+                        <td>
+                          <strong>{formatEuro(p)}</strong>/Monat
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <p className="fine-print">
+                Zzgl. Kilometerpaket. Kaution 1.000 €, Vollkasko mit 1.000 €
+                Selbstbeteiligung inklusive.
+              </p>
+            </>
+          )}
         </div>
 
         <div className="booking-panel">
