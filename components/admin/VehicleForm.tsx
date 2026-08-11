@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import ImageUpload from "@/components/admin/ImageUpload";
 import type { Vehicle } from "@/lib/types";
 
 const CATEGORIES = [
@@ -182,7 +183,7 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
 
       <div className="field">
         <label className="field-label" htmlFor="v-photo">
-          Foto-URL <span className="hint">optional, z. B. Link zu einem Bild</span>
+          Foto <span className="hint">optional, Link einfügen oder Bild hochladen</span>
         </label>
         <input
           id="v-photo"
@@ -191,6 +192,32 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
           onChange={(e) => set("photo_url", e.target.value)}
           placeholder="https://…"
         />
+        <div className="photo-actions">
+          <ImageUpload
+            bucket="vehicle-photos"
+            folder="fahrzeuge"
+            returnPublicUrl
+            label="Bild hochladen"
+            onUploaded={(urls) => set("photo_url", urls[0] ?? "")}
+          />
+          {form.photo_url && (
+            <button
+              type="button"
+              className="btn-text-danger"
+              onClick={() => set("photo_url", "")}
+            >
+              Foto entfernen
+            </button>
+          )}
+        </div>
+        {form.photo_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={form.photo_url}
+            alt="Vorschau des Fahrzeugfotos"
+            className="photo-preview"
+          />
+        )}
       </div>
 
       <label className="consent-row">

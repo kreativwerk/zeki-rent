@@ -8,6 +8,7 @@ interface Ticket {
   message: string;
   status: "offen" | "in_bearbeitung" | "erledigt";
   agent_response: string | null;
+  attachments: string[] | null;
   created_at: string;
 }
 
@@ -30,6 +31,18 @@ export default async function AdminSupportPage() {
 
   const tickets = (data ?? []) as Ticket[];
   const open = tickets.filter((t) => t.status !== "erledigt").length;
+
+  // Der Bucket ist nicht oeffentlich, Anhaenge brauchen kurzlebige Links
+  const paths = tickets.flatMap((t) => t.attachments ?? []);
+  const links: Record<string, string> = {};
+  if (paths.length > 0) {
+    const { data: signed } = await supabase.storage
+      .from("ticket-attachments")
+      .createSignedUrls(paths, 3600);
+    for (const s of signed ?? []) {
+      if (s.path && s.signedUrl) links[s.path] = s.signedUrl;
+    }
+  }
 
   return (
     <>
@@ -56,6 +69,28 @@ export default async function AdminSupportPage() {
                 {formatDateTime(t.created_at)} · {t.created_by_email}
               </p>
               <p className="ticket-message">{t.message}</p>
+              {(t.attachments?.length ?? 0) > 0 && (
+                <div className="attachment-grid">
+                  {t.attachments!.map((p) =>
+                    links[p] ? (
+                      <a
+                        key={p}
+                        href={links[p]}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="attachment"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={links[p]} alt="Anhang zum Ticket" />
+                      </a>
+                    ) : (
+                      <span key={p} className="attachment">
+                        <span className="muted">Bild nicht verfügbar</span>
+                      </span>
+                    )
+                  )}
+                </div>
+              )}
               {t.agent_response && (
                 <div className="ticket-response">
                   <strong>Antwort</strong>
