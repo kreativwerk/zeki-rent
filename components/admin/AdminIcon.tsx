@@ -6,6 +6,7 @@ export type AdminIconName =
   | "buchungen"
   | "fahrzeuge"
   | "kunden"
+  | "statistik"
   | "support";
 
 const PATHS: Record<AdminIconName, string> = {
@@ -29,6 +30,8 @@ const PATHS: Record<AdminIconName, string> = {
   // people
   kunden:
     "M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-6 1.8-6 4v2h12v-2c0-2.2-2.7-4-6-4Zm8-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 2c-.7 0-1.4.1-2 .3 1.8.9 3 2.3 3 3.9V20h5v-2c0-2.2-2.7-4-6-4Z",
+  // bar chart
+  statistik: "M4 20h3V10H4v10Zm6.5 0h3V4h-3v16ZM17 20h3v-7h-3v7Z",
   // chat
   support:
     "M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2ZM7 9h10v2H7V9Zm0 4h7v2H7v-2Z",

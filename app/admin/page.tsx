@@ -40,6 +40,7 @@ export default async function AdminDashboardPage() {
     tickets,
     ticketsOpen,
     assignmentsActive,
+    views7,
     recent,
   ] = await Promise.all([
     countOf("bookings"),
@@ -62,6 +63,13 @@ export default async function AdminDashboardPage() {
       .neq("status", "storniert")
       .lte("start_date", todayIso)
       .gte("end_date", todayIso),
+    supabase
+      .from("page_views")
+      .select("id", { count: "exact", head: true })
+      .gte(
+        "created_at",
+        new Date(Date.now() - 7 * 86400000).toISOString()
+      ),
     supabase
       .from("bookings")
       .select("id, created_at, status, vehicles(name), profiles(name, company_name)")
@@ -119,6 +127,13 @@ export default async function AdminDashboardPage() {
       label: "Kunden",
       value: customers.count ?? 0,
       hint: "registriert",
+    },
+    {
+      href: "/admin/statistik",
+      icon: "statistik",
+      label: "Statistik",
+      value: views7.count ?? 0,
+      hint: "Aufrufe in 7 Tagen",
     },
     {
       href: "/admin/support",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import ZekiLogo from "@/components/Logo";
+import PageViewTracker from "@/components/PageViewTracker";
 
 export default function PublicLayout({
   children,
@@ -8,6 +9,7 @@ export default function PublicLayout({
   return (
     <>
       <SiteHeader />
+      <PageViewTracker />
       <main>{children}</main>
       <footer className="site-footer" id="kontakt">
         <div className="site-footer-inner">

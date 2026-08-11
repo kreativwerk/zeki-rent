@@ -1163,6 +1163,10 @@ main {
   opacity: 0.85;
 }
 
+.nav-label-short {
+  display: none;
+}
+
 .admin-nav a.active svg {
   opacity: 1;
 }
@@ -1515,6 +1519,179 @@ main {
   color: var(--muted);
 }
 
+/* ---------- Statistik ---------- */
+
+.range-pills {
+  display: flex;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.range-pills .pill {
+  text-decoration: none;
+  font-size: 0.875rem;
+  padding: 0.4rem 0.875rem;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .stat-tile {
+    padding: 0.875rem;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  background: var(--card);
+  border: 1px solid var(--separator);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.125rem;
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.stat-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.stat-up {
+  color: #1f8a3d;
+  font-weight: 600;
+}
+
+.stat-down {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 9rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.chart-col {
+  flex: 1 1 0;
+  min-width: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  gap: 0.25rem;
+}
+
+.chart-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.chart-bar {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+}
+
+.chart-label {
+  font-size: 0.5rem;
+  color: var(--muted);
+  white-space: nowrap;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  height: 1rem;
+}
+
+.chart-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* Auf dem Handy sind 30 gedrehte Datumsangaben unlesbar */
+@media (max-width: 700px) {
+  .chart-label {
+    display: none;
+  }
+  .chart-col {
+    gap: 0;
+  }
+}
+
+.rank-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rank-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--separator);
+}
+
+.rank-list li:last-child {
+  border-bottom: none;
+}
+
+.rank-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9375rem;
+}
+
+.rank-value {
+  flex: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.stat-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0 1.25rem;
+}
+
 @media (max-width: 560px) {
   .plan-list li,
   .recent-list li {
@@ -1637,6 +1814,12 @@ main {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .nav-label-full {
+    display: none;
+  }
+  .nav-label-short {
+    display: inline;
   }
   .admin-sidebar-footer {
     flex: none;

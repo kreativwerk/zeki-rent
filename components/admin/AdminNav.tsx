@@ -4,13 +4,45 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AdminIcon, { type AdminIconName } from "@/components/admin/AdminIcon";
 
-const items: { href: string; label: string; icon: AdminIconName }[] = [
-  { href: "/admin", label: "Übersicht", icon: "dashboard" },
-  { href: "/admin/anfragen", label: "Anfragen", icon: "anfragen" },
-  { href: "/admin/buchungen", label: "Buchungen", icon: "buchungen" },
-  { href: "/admin/fahrzeuge", label: "Fahrzeuge", icon: "fahrzeuge" },
-  { href: "/admin/kunden", label: "Kunden", icon: "kunden" },
-  { href: "/admin/support", label: "Support", icon: "support" },
+// short: Beschriftung fuer die App-Leiste unten auf dem Handy
+const items: {
+  href: string;
+  label: string;
+  short: string;
+  icon: AdminIconName;
+}[] = [
+  { href: "/admin", label: "Übersicht", short: "Start", icon: "dashboard" },
+  {
+    href: "/admin/anfragen",
+    label: "Anfragen",
+    short: "Anfragen",
+    icon: "anfragen",
+  },
+  {
+    href: "/admin/buchungen",
+    label: "Buchungen",
+    short: "Plan",
+    icon: "buchungen",
+  },
+  {
+    href: "/admin/fahrzeuge",
+    label: "Fahrzeuge",
+    short: "Flotte",
+    icon: "fahrzeuge",
+  },
+  { href: "/admin/kunden", label: "Kunden", short: "Kunden", icon: "kunden" },
+  {
+    href: "/admin/statistik",
+    label: "Statistik",
+    short: "Zahlen",
+    icon: "statistik",
+  },
+  {
+    href: "/admin/support",
+    label: "Support",
+    short: "Support",
+    icon: "support",
+  },
 ];
 
 export default function AdminNav() {
@@ -30,7 +62,8 @@ export default function AdminNav() {
             className={active ? "active" : ""}
           >
             <AdminIcon name={item.icon} size={19} />
-            <span>{item.label}</span>
+            <span className="nav-label-full">{item.label}</span>
+            <span className="nav-label-short">{item.short}</span>
           </Link>
         );
       })}
