@@ -18,6 +18,13 @@ const PARTNER_IMG =
 const HERO_IMG =
   "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_202348_50c51be0-1e29-4bef-9113-56c3c98e6d50_min.webp";
 
+const CATEGORIES = [
+  { href: "#fahrzeuge", label: "Transporter mieten", icon: "van" },
+  { href: "#pkw", label: "Pkw mieten", icon: "car" },
+  { href: "#abo", label: "Auto-Abo", icon: "abo" },
+  { href: "#kaufen", label: "Kaufen & verkaufen", icon: "tag" },
+] as const;
+
 /** Alles ausser der Kategorie "PKW / Kleinwagen" zaehlt als Nutzfahrzeug */
 function isTransporter(v: Vehicle): boolean {
   return !/^pkw/i.test(v.category);
@@ -164,6 +171,19 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <nav className="category-nav" aria-label="Unsere Angebote">
+        <ul>
+          {CATEGORIES.map((c) => (
+            <li key={c.href}>
+              <Link href={c.href}>
+                <CategoryIcon name={c.icon} />
+                <span>{c.label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       <section className="trust-strip">
         <ul>
@@ -412,6 +432,22 @@ export default async function Home() {
         </div>
       </section>
     </>
+  );
+}
+
+/* Google Material Symbols (Apache 2.0), ein Strichgewicht wie im Rest der Seite */
+const CATEGORY_PATHS: Record<string, string> = {
+  van: "M3 6h11a2 2 0 0 1 2 2v1h2.1a2 2 0 0 1 1.7 1l1.9 3.1a2 2 0 0 1 .3 1V17h-2.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H2V8a2 2 0 0 1 1-2Zm13 5h4l-1.5-2.4a.5.5 0 0 0-.4-.2H16v2.6ZM7 16.5A1.5 1.5 0 1 0 7 19.5a1.5 1.5 0 0 0 0-3Zm10 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z",
+  car: "M18.92 6.01A1.5 1.5 0 0 0 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99ZM6.5 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm11 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3ZM5 11l1.5-4.5h11L19 11H5Z",
+  abo: "M12 6V3L8 7l4 4V8c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 14c0-4.42-3.58-8-8-8Zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 9.74A7.93 7.93 0 0 0 4 14c0 4.42 3.58 8 8 8v3l4-4-4-4v3Z",
+  tag: "M21.41 11.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42ZM5.5 7A1.5 1.5 0 1 1 7 5.5 1.5 1.5 0 0 1 5.5 7Z",
+};
+
+function CategoryIcon({ name }: { name: string }) {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden>
+      <path d={CATEGORY_PATHS[name]} />
+    </svg>
   );
 }
 
