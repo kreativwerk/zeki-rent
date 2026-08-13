@@ -24,16 +24,21 @@ const INCLUDED = [
 
 export default async function AboPage() {
   let vehicles: CatalogVehicle[] = [];
+  let prepared: { brand: string; models: number }[] = [];
   try {
     const supabase = await createClient();
-    const { data } = await supabase
-      .from("catalog_vehicles")
-      .select("*")
-      .eq("active", true)
-      .in("service_type", ["abo", "beides"])
-      .order("brand")
-      .order("sort_order");
+    const [{ data }, { data: prep }] = await Promise.all([
+      supabase
+        .from("catalog_vehicles")
+        .select("*")
+        .eq("active", true)
+        .in("service_type", ["abo", "beides"])
+        .order("brand")
+        .order("sort_order"),
+      supabase.rpc("abo_brands_in_preparation"),
+    ]);
     vehicles = (data ?? []) as CatalogVehicle[];
+    prepared = (prep ?? []) as { brand: string; models: number }[];
   } catch (err) {
     console.error("Abo-Fahrzeuge konnten nicht geladen werden:", err);
   }
@@ -71,13 +76,42 @@ export default async function AboPage() {
         <h2 className="display-title">Verfügbare Modelle</h2>
         {vehicles.length === 0 ? (
           <div className="card">
+            <span className="badge-soon">Coming soon</span>
+            <h3 style={{ margin: "0.75rem 0 0.375rem" }}>
+              Die ersten Abo-Modelle stehen in den Startlöchern
+            </h3>
             <p className="empty-state">
-              Wir stellen gerade unsere Abo-Modelle zusammen. Melden Sie sich
-              gern direkt, dann finden wir Ihr Fahrzeug.
+              Wir stimmen gerade die Raten ab. Sobald ein Modell freigeschaltet
+              ist, erscheint es hier mit Laufzeiten und Preis.
             </p>
-            <Link href="/anfrage" className="btn-primary btn-link">
-              Wunschfahrzeug anfragen
-            </Link>
+            {prepared.length > 0 && (
+              <ul className="prep-list">
+                {prepared.map((p) => (
+                  <li key={p.brand}>
+                    <strong>{p.brand}</strong>
+                    <span className="muted">
+                      {p.models} {p.models === 1 ? "Modell" : "Modelle"} in
+                      Vorbereitung
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="empty-state">
+              Sie wissen schon, welches Auto Sie möchten? Rufen Sie uns an, wir
+              machen Ihnen direkt ein Abo-Angebot.
+            </p>
+            <div className="abo-contact">
+              <a href="tel:+491639574116" className="btn-primary btn-link">
+                Jetzt anrufen
+              </a>
+              <a
+                href="mailto:info@zeki-rent.com?subject=Anfrage%20Auto-Abo"
+                className="btn-secondary btn-link"
+              >
+                E-Mail schreiben
+              </a>
+            </div>
           </div>
         ) : (
           brands.map((brand) => (

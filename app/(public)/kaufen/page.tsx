@@ -63,11 +63,19 @@ function Section({
         <div className="card">
           <p className="empty-state">
             Aktuell steht hier nichts im Bestand. Sagen Sie uns, was Sie suchen,
-            wir finden es über unser Partnernetzwerk.
+            wir finden es über unser Händlernetzwerk.
           </p>
-          <Link href="/anfrage" className="btn-secondary btn-link">
-            Wunschfahrzeug anfragen
-          </Link>
+          <div className="abo-contact">
+            <a href="tel:+491639574116" className="btn-secondary btn-link">
+              Jetzt anrufen
+            </a>
+            <a
+              href="mailto:info@zeki-rent.com?subject=Kaufanfrage"
+              className="btn-secondary btn-link"
+            >
+              E-Mail schreiben
+            </a>
+          </div>
         </div>
       ) : (
         <div className="model-grid">
