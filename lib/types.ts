@@ -102,6 +102,47 @@ export function vehicleTitle(v: CatalogVehicle): string {
   return `${v.brand} ${v.model}`;
 }
 
+export type SaleCondition = "gebraucht" | "neu";
+
+export interface SaleVehicle {
+  id: string;
+  condition: SaleCondition;
+  brand: string;
+  model: string;
+  variant: string | null;
+  first_registration: string | null;
+  mileage_km: number | null;
+  power: string | null;
+  transmission: string | null;
+  fuel: string | null;
+  hu_until: string | null;
+  previous_owners: number | null;
+  accident_free: boolean | null;
+  description: string | null;
+  price: number | null;
+  price_on_request: boolean;
+  /** null, 'ausweisbar' oder 'differenzbesteuert' */
+  vat_note: string | null;
+  photo_url: string | null;
+  active: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
+export function saleTitle(v: SaleVehicle): string {
+  return [v.brand, v.model, v.variant].filter(Boolean).join(" ");
+}
+
+export function formatKm(km: number | null): string | null {
+  if (km === null) return null;
+  return `${new Intl.NumberFormat("de-DE").format(km)} km`;
+}
+
+export const VAT_LABEL: Record<string, string> = {
+  ausweisbar: "MwSt. ausweisbar",
+  differenzbesteuert: "Differenzbesteuert nach § 25a UStG, MwSt. nicht ausweisbar",
+};
+
 export type CustomerType = "privat" | "gewerblich";
 
 export interface Assignment {

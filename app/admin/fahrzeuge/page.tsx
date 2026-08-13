@@ -130,6 +130,17 @@ export default async function AdminVehiclesPage() {
           Modellpaletten verwalten
         </Link>
       </div>
+
+      <h2 className="admin-section-title">Verkauf</h2>
+      <div className="card">
+        <p className="step-intro">
+          Gebrauchtwagen und Neuwagen zum Verkauf. Auch hier gilt: erst
+          anlegen, dann Preis und Mehrwertsteuer eintragen und freischalten.
+        </p>
+        <Link href="/admin/verkauf" className="btn-primary btn-link">
+          Verkaufsfahrzeuge verwalten
+        </Link>
+      </div>
     </>
   );
 }

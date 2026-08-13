@@ -1642,17 +1642,36 @@ main {
 }
 
 .abo-banner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: stretch;
+  gap: 0;
   background: var(--card);
   border: 1px solid var(--separator);
   border-radius: var(--radius-card);
-  padding: 1.75rem;
+  overflow: hidden;
   text-decoration: none;
   color: inherit;
+  transition: border-color 120ms ease-out;
+}
+
+.abo-banner:hover {
+  border-color: var(--accent);
+}
+
+.abo-banner-media {
+  position: relative;
+  min-height: 15rem;
+  background: #fff;
+}
+
+.abo-banner-copy {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.375rem;
 }
 
 .abo-banner h2 {
@@ -1662,9 +1681,27 @@ main {
 }
 
 .abo-banner p {
-  margin: 0;
+  margin: 0 0 1rem;
   color: var(--muted);
   max-width: 38rem;
+}
+
+/* Auf weissem Studiohintergrund sitzt das Auto besser mit Luft drumherum */
+.abo-banner-media .slide {
+  object-fit: contain;
+  padding: 0.5rem;
+}
+
+@media (max-width: 760px) {
+  .abo-banner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .abo-banner-media {
+    min-height: 11rem;
+  }
+  .abo-banner-copy {
+    padding: 1.25rem;
+  }
 }
 
 .steps-list {
@@ -1703,6 +1740,38 @@ main {
 }
 
 .steps-list span {
+  color: var(--muted);
+}
+
+.sale-section-intro {
+  color: var(--muted);
+  margin: 0 0 1rem;
+  max-width: 42rem;
+}
+
+.sale-hero-media {
+  margin-top: 1.5rem;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--separator);
+}
+
+.sale-hero-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sale-price {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0.25rem 0 0.25rem;
+}
+
+.model-card-vat {
+  font-size: 0.75rem;
   color: var(--muted);
 }
 

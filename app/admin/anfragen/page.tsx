@@ -27,6 +27,22 @@ interface GeneralRequest {
   profiles?: CustomerRef | null;
 }
 
+interface SaleRequest {
+  id: string;
+  financing: boolean;
+  trade_in: boolean;
+  note: string | null;
+  status: string;
+  created_at: string;
+  sale_vehicles?: {
+    brand: string;
+    model: string;
+    variant: string | null;
+    condition: string;
+  } | null;
+  profiles?: CustomerRef | null;
+}
+
 interface AboRequest {
   id: string;
   service: string;
@@ -85,30 +101,48 @@ function CustomerCell({ c }: { c?: CustomerRef | null }) {
 
 export default async function AdminRequestsPage() {
   const supabase = await createClient();
-  const [{ data }, { data: prebookData }, { data: requestData }, { data: aboData }] =
-    await Promise.all([
-      supabase
-        .from("bookings")
-        .select("*, vehicles(name), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("prebookings")
-        .select("*, profiles(name, email, phone, company_name)")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("general_requests")
-        .select("*, profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("abo_requests")
-        .select("*, catalog_vehicles(brand, model), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
-        .order("created_at", { ascending: false }),
-    ]);
+  const [
+    { data },
+    { data: prebookData },
+    { data: requestData },
+    { data: aboData },
+    { data: saleData },
+  ] = await Promise.all([
+    supabase
+      .from("bookings")
+      .select(
+        "*, vehicles(name), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)",
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("prebookings")
+      .select("*, profiles(name, email, phone, company_name)")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("general_requests")
+      .select(
+        "*, profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)",
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("abo_requests")
+      .select(
+        "*, catalog_vehicles(brand, model), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)",
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("sale_requests")
+      .select(
+        "*, sale_vehicles(brand, model, variant, condition), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)",
+      )
+      .order("created_at", { ascending: false }),
+  ]);
 
   const bookings = (data ?? []) as Booking[];
   const prebookings = (prebookData ?? []) as Prebooking[];
   const generalRequests = (requestData ?? []) as GeneralRequest[];
   const aboRequests = (aboData ?? []) as unknown as AboRequest[];
+  const saleRequests = (saleData ?? []) as unknown as SaleRequest[];
   const open = bookings.filter((b) => b.status === "neu").length;
 
   return (
@@ -176,6 +210,75 @@ export default async function AdminRequestsPage() {
                     >
                       Einplanen
                     </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <h2 className="admin-section-title">
+        Kaufanfragen
+        <span className="admin-count">{saleRequests.length}</span>
+      </h2>
+      {saleRequests.length === 0 ? (
+        <div className="card">
+          <p className="empty-state">Noch keine Kaufanfragen.</p>
+        </div>
+      ) : (
+        <div className="card table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Kunde</th>
+                <th>Fahrzeug</th>
+                <th>Wünsche</th>
+                <th>Nachricht</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {saleRequests.map((r) => (
+                <tr key={r.id}>
+                  <td data-label="Datum">{formatDate(r.created_at)}</td>
+                  <td data-label="Kunde">
+                    <CustomerCell c={r.profiles} />
+                  </td>
+                  <td data-label="Fahrzeug">
+                    <div className="cell-stack">
+                      <strong>
+                        {r.sale_vehicles
+                          ? [
+                              r.sale_vehicles.brand,
+                              r.sale_vehicles.model,
+                              r.sale_vehicles.variant,
+                            ]
+                              .filter(Boolean)
+                              .join(" ")
+                          : "Fahrzeug entfernt"}
+                      </strong>
+                      <span className="muted">
+                        {r.sale_vehicles?.condition === "neu"
+                          ? "Neuwagen"
+                          : "Gebrauchtwagen"}
+                      </span>
+                    </div>
+                  </td>
+                  <td data-label="Wünsche" className="muted">
+                    {[
+                      r.financing && "Finanzierung",
+                      r.trade_in && "Inzahlungnahme",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ") || "–"}
+                  </td>
+                  <td data-label="Nachricht" className="note-cell">
+                    {r.note ?? "–"}
+                  </td>
+                  <td data-label="Status">
+                    <span className="status status-neu">{r.status}</span>
                   </td>
                 </tr>
               ))}

@@ -9,6 +9,8 @@ import {
   type Vehicle,
 } from "@/lib/types";
 import ToggSlider from "@/components/ToggSlider";
+import TileSlider from "@/components/TileSlider";
+import { ABO_SLIDES } from "@/lib/media";
 
 const PARTNER_IMG =
   "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_205457_f669bfdb-f449-4197-8292-a0b92c742223_min.webp";
@@ -223,7 +225,10 @@ export default async function Home() {
 
       <section className="section" id="abo">
         <Link href="/abo" className="abo-banner">
-          <div>
+          <div className="abo-banner-media">
+            <TileSlider slides={ABO_SLIDES} />
+          </div>
+          <div className="abo-banner-copy">
             <span className="badge-soon">Neu bei Zeki Rent</span>
             <h2>Auto-Abo ab 6 Monaten</h2>
             <p>
@@ -231,8 +236,8 @@ export default async function Home() {
               Reifen. Laufzeit 6, 12, 18 oder 24 Monate. Vom Kleinwagen bis zum
               Elektro-Transporter.
             </p>
+            <span className="fleet-tile-cta">Abo entdecken</span>
           </div>
-          <span className="fleet-tile-cta">Abo entdecken</span>
         </Link>
       </section>
 
