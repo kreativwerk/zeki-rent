@@ -33,6 +33,75 @@ export interface Booking {
   profiles?: Pick<Profile, "name" | "email" | "phone"> | null;
 }
 
+export type ServiceType = "abo" | "miete" | "beides";
+
+export interface ModelCatalog {
+  id: string;
+  brand: string;
+  title: string;
+  service_type: ServiceType;
+  pdf_path: string | null;
+  note: string | null;
+  created_at: string;
+}
+
+export interface CatalogVehicle {
+  id: string;
+  catalog_id: string | null;
+  brand: string;
+  model: string;
+  segment: string | null;
+  drivetrain: string | null;
+  power: string | null;
+  length: string | null;
+  range_text: string | null;
+  seats: number | null;
+  highlights: string | null;
+  /** Listenpreis des Herstellers, nur intern zur Kalkulation */
+  list_price: number | null;
+  service_type: ServiceType;
+  price_6m: number | null;
+  price_12m: number | null;
+  price_18m: number | null;
+  price_24m: number | null;
+  price_on_request: boolean;
+  photo_url: string | null;
+  notes: string | null;
+  active: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
+export const ABO_TERMS = [6, 12, 18, 24] as const;
+
+export function aboPriceFor(v: CatalogVehicle, months: number): number | null {
+  if (v.price_on_request) return null;
+  switch (months) {
+    case 6:
+      return v.price_6m;
+    case 12:
+      return v.price_12m;
+    case 18:
+      return v.price_18m;
+    case 24:
+      return v.price_24m;
+    default:
+      return null;
+  }
+}
+
+export function cheapestAboPrice(v: CatalogVehicle): number | null {
+  if (v.price_on_request) return null;
+  const prices = [v.price_6m, v.price_12m, v.price_18m, v.price_24m].filter(
+    (p): p is number => p !== null
+  );
+  return prices.length ? Math.min(...prices) : null;
+}
+
+export function vehicleTitle(v: CatalogVehicle): string {
+  return `${v.brand} ${v.model}`;
+}
+
 export type CustomerType = "privat" | "gewerblich";
 
 export interface Assignment {

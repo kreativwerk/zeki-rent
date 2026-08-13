@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { cheapestPrice, formatEuro, type Vehicle } from "@/lib/types";
+import {
+  cheapestAboPrice,
+  cheapestPrice,
+  formatEuro,
+  vehicleTitle,
+  type CatalogVehicle,
+  type Vehicle,
+} from "@/lib/types";
 import ToggSlider from "@/components/ToggSlider";
 
 const PARTNER_IMG =
@@ -23,8 +30,26 @@ async function getVehicles(): Promise<Vehicle[]> {
   }
 }
 
+async function getCatalogRentals(): Promise<CatalogVehicle[]> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("catalog_vehicles")
+      .select("*")
+      .eq("active", true)
+      .in("service_type", ["miete", "beides"])
+      .order("sort_order");
+    return (data ?? []) as CatalogVehicle[];
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
-  const vehicles = await getVehicles();
+  const [vehicles, catalogRentals] = await Promise.all([
+    getVehicles(),
+    getCatalogRentals(),
+  ]);
 
   return (
     <>
@@ -113,6 +138,45 @@ export default async function Home() {
             );
           })}
 
+          {catalogRentals.map((v) => {
+            const from = cheapestAboPrice(v);
+            return (
+              <Link
+                key={v.id}
+                href={`/modelle/${v.id}`}
+                className="fleet-tile"
+              >
+                <div className="fleet-tile-media">
+                  {v.photo_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={v.photo_url} alt={vehicleTitle(v)} />
+                  )}
+                </div>
+                <div className="fleet-tile-body">
+                  <h3>{vehicleTitle(v)}</h3>
+                  <p className="fleet-tile-specs">
+                    {[v.segment, v.drivetrain, v.power]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                  <div className="fleet-tile-foot">
+                    <span className="fleet-tile-price">
+                      {from !== null ? (
+                        <>
+                          ab <strong>{formatEuro(from)}</strong>/Monat
+                        </>
+                      ) : (
+                        <strong>Preis auf Anfrage</strong>
+                      )}
+                    </span>
+                    <span className="fleet-tile-cta">Jetzt anfragen</span>
+                    <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+
           <Link href="/anfrage" className="fleet-tile">
             <div className="fleet-tile-media">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -155,6 +219,21 @@ export default async function Home() {
             </div>
           </Link>
         </div>
+      </section>
+
+      <section className="section" id="abo">
+        <Link href="/abo" className="abo-banner">
+          <div>
+            <span className="badge-soon">Neu bei Zeki Rent</span>
+            <h2>Auto-Abo ab 6 Monaten</h2>
+            <p>
+              Ein Preis für alles: Fahrzeug, Versicherung, Wartung, Steuer und
+              Reifen. Laufzeit 6, 12, 18 oder 24 Monate. Vom Kleinwagen bis zum
+              Elektro-Transporter.
+            </p>
+          </div>
+          <span className="fleet-tile-cta">Abo entdecken</span>
+        </Link>
       </section>
 
       <section className="section section-alt" id="ablauf">

@@ -25,6 +25,7 @@ export default async function SiteHeader() {
         </Link>
         <nav className="nav-links">
           <Link href="/#fahrzeuge">Fahrzeuge</Link>
+          <Link href="/abo">Auto-Abo</Link>
           <Link href="/#ablauf">So funktioniert&apos;s</Link>
           <Link href="/#kontakt">Kontakt</Link>
         </nav>

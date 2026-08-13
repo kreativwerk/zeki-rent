@@ -27,6 +27,20 @@ interface GeneralRequest {
   profiles?: CustomerRef | null;
 }
 
+interface AboRequest {
+  id: string;
+  service: string;
+  term_months: number;
+  km_per_year: string | null;
+  start_from: string | null;
+  handover: string | null;
+  note: string | null;
+  status: string;
+  created_at: string;
+  catalog_vehicles?: { brand: string; model: string } | null;
+  profiles?: CustomerRef | null;
+}
+
 interface CustomerRef {
   name: string | null;
   email: string | null;
@@ -71,7 +85,7 @@ function CustomerCell({ c }: { c?: CustomerRef | null }) {
 
 export default async function AdminRequestsPage() {
   const supabase = await createClient();
-  const [{ data }, { data: prebookData }, { data: requestData }] =
+  const [{ data }, { data: prebookData }, { data: requestData }, { data: aboData }] =
     await Promise.all([
       supabase
         .from("bookings")
@@ -85,11 +99,16 @@ export default async function AdminRequestsPage() {
         .from("general_requests")
         .select("*, profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
         .order("created_at", { ascending: false }),
+      supabase
+        .from("abo_requests")
+        .select("*, catalog_vehicles(brand, model), profiles(name, email, phone, company_name, billing_street, billing_zip, billing_city)")
+        .order("created_at", { ascending: false }),
     ]);
 
   const bookings = (data ?? []) as Booking[];
   const prebookings = (prebookData ?? []) as Prebooking[];
   const generalRequests = (requestData ?? []) as GeneralRequest[];
+  const aboRequests = (aboData ?? []) as unknown as AboRequest[];
   const open = bookings.filter((b) => b.status === "neu").length;
 
   return (
@@ -157,6 +176,66 @@ export default async function AdminRequestsPage() {
                     >
                       Einplanen
                     </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <h2 className="admin-section-title">
+        Abo-Anfragen
+        <span className="admin-count">{aboRequests.length}</span>
+      </h2>
+      {aboRequests.length === 0 ? (
+        <div className="card">
+          <p className="empty-state">Noch keine Abo-Anfragen.</p>
+        </div>
+      ) : (
+        <div className="card table-card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Kunde</th>
+                <th>Fahrzeug</th>
+                <th>Laufzeit</th>
+                <th>Details</th>
+                <th>Anmerkung</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {aboRequests.map((r) => (
+                <tr key={r.id}>
+                  <td data-label="Datum">{formatDate(r.created_at)}</td>
+                  <td data-label="Kunde">
+                    <CustomerCell c={r.profiles} />
+                  </td>
+                  <td data-label="Fahrzeug">
+                    <div className="cell-stack">
+                      <strong>
+                        {r.catalog_vehicles
+                          ? `${r.catalog_vehicles.brand} ${r.catalog_vehicles.model}`
+                          : "Modell entfernt"}
+                      </strong>
+                      <span className="muted">
+                        {r.service === "miete" ? "Miete" : "Auto-Abo"}
+                      </span>
+                    </div>
+                  </td>
+                  <td data-label="Laufzeit">{r.term_months} Monate</td>
+                  <td data-label="Details" className="muted">
+                    {[r.km_per_year, r.start_from, r.handover]
+                      .filter(Boolean)
+                      .join(" · ") || "–"}
+                  </td>
+                  <td data-label="Anmerkung" className="note-cell">
+                    {r.note ?? "–"}
+                  </td>
+                  <td data-label="Status">
+                    <span className="status status-neu">{r.status}</span>
                   </td>
                 </tr>
               ))}
