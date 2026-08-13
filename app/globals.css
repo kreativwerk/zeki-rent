@@ -25,6 +25,26 @@
   box-sizing: border-box;
 }
 
+/* Auch die Flaechen, die der Browser stellt, gehoeren zur Marke */
+::selection {
+  background: var(--accent-tint);
+  color: var(--accent-deep);
+}
+
+.band-blue ::selection,
+.band-black ::selection,
+.admin-sidebar ::selection,
+.site-footer ::selection {
+  background: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+input,
+textarea,
+select {
+  caret-color: var(--accent);
+}
+
 html,
 body {
   margin: 0;
@@ -1517,6 +1537,290 @@ main {
 .context-card p {
   margin: 0;
   color: var(--muted);
+}
+
+/* ---------- Sektionsbaender der Startseite ----------
+   Vier Services, vier Flaechen: weiss, hellgrau, UI-Blau, Schwarz.
+   Die Baender setzen die Farbtoken neu, damit Kacheln und Texte darin
+   ohne Sonderklassen richtig aussehen. */
+
+.band {
+  position: relative;
+}
+
+.band-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+.band-head {
+  max-width: 40rem;
+  margin-bottom: 0.5rem;
+}
+
+.band-head h2 {
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.band-head p {
+  margin: 0.75rem 0 0;
+  font-size: 1.0625rem;
+  color: var(--muted);
+  max-width: 34rem;
+}
+
+/* Weiss: Kacheln tragen eine Haarlinie statt Schatten, sonst verschwinden sie */
+.band-white {
+  background: #fff;
+}
+
+.band-white .fleet-tile {
+  background: var(--card);
+  border: 1px solid var(--separator);
+  box-shadow: none;
+}
+
+.band-white a.fleet-tile:hover {
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
+/* Hellgrau: die vertraute Flaeche mit weissen Kacheln */
+.band-grey {
+  background: var(--bg);
+  border-top: 1px solid var(--separator);
+  border-bottom: 1px solid var(--separator);
+}
+
+/* UI-Blau */
+/* Der obere Farbwert bestimmt den Kontrast: heller als #146d90 faellt
+   Fliesstext unter 4.5:1 */
+.band-blue {
+  --muted: rgba(255, 255, 255, 0.9);
+  --separator: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  background: linear-gradient(180deg, #12647f 0%, #0b4a63 100%);
+}
+
+.band-blue h2,
+.band-blue h3,
+.band-blue strong {
+  color: #fff;
+}
+
+/* Schwarz */
+.band-black {
+  --muted: rgba(255, 255, 255, 0.72);
+  --separator: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  background: #0c0c0e;
+}
+
+.band-black h2,
+.band-black h3,
+.band-black strong {
+  color: #fff;
+}
+
+/* Abo-Band */
+.abo-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.abo-split-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #fff;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.abo-split-media .slide {
+  object-fit: contain;
+  padding: 0.75rem;
+}
+
+.abo-split-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.abo-split-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  max-width: 30rem;
+}
+
+.term-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.term-chips li {
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.btn-invert {
+  display: inline-block;
+  background: #fff;
+  color: var(--accent-deep);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  padding: 0.8rem 1.75rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: transform 120ms ease-out;
+}
+
+.btn-invert:active {
+  transform: scale(0.97);
+}
+
+.btn-ghost {
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  padding: 0.75rem 1.6875rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 120ms ease-out;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Kaufen und verkaufen */
+.trade-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.trade-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--separator);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 120ms ease-out, background 120ms ease-out;
+}
+
+a.trade-panel:hover {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.trade-panel h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.trade-panel p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.trade-panel-media {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.trade-panel-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trade-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: var(--muted);
+}
+
+.trade-points li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.trade-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+/* Beide Panels sind gleich hoch, die Aktion sitzt jeweils unten */
+.trade-actions,
+.trade-panel > .fleet-tile-cta {
+  margin-top: auto;
+}
+
+.trade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.band .how-split,
+.band .terms-clusters,
+.band .fleet-duo {
+  margin-top: 2rem;
+}
+
+@media (max-width: 820px) {
+  .abo-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .band-inner {
+    padding: 2.75rem 1rem;
+  }
+  .trade-panel {
+    padding: 1.25rem;
+  }
 }
 
 /* ---------- Auto-Abo ---------- */

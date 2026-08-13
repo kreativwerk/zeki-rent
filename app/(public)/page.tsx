@@ -10,13 +10,26 @@ import {
 } from "@/lib/types";
 import ToggSlider from "@/components/ToggSlider";
 import TileSlider from "@/components/TileSlider";
-import { ABO_SLIDES } from "@/lib/media";
+import { ABO_SLIDES, SALE_IMG } from "@/lib/media";
 
 const PARTNER_IMG =
   "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_205457_f669bfdb-f449-4197-8292-a0b92c742223_min.webp";
 
 const HERO_IMG =
   "https://d8j0ntlcm91z4.cloudfront.net/user_3EApQM9b8e9WVJaVhjLHajMjyj2/hf_20260808_202348_50c51be0-1e29-4bef-9113-56c3c98e6d50_min.webp";
+
+/** Alles ausser der Kategorie "PKW / Kleinwagen" zaehlt als Nutzfahrzeug */
+function isTransporter(v: Vehicle): boolean {
+  return !/^pkw/i.test(v.category);
+}
+
+/** Modelle aus einer Modellpalette nach Aufbau einsortieren */
+const TRANSPORTER_WORDS =
+  /transport|kasten|cargo|\bvan\b|kipper|pritsche|kühl|fahrgestell|chassis|crew|anhänger/i;
+
+function isCatalogTransporter(v: CatalogVehicle): boolean {
+  return TRANSPORTER_WORDS.test(`${v.segment ?? ""} ${v.model}`);
+}
 
 async function getVehicles(): Promise<Vehicle[]> {
   try {
@@ -47,11 +60,78 @@ async function getCatalogRentals(): Promise<CatalogVehicle[]> {
   }
 }
 
+function PriceLine({ from }: { from: number | null }) {
+  return (
+    <span className="fleet-tile-price">
+      {from !== null ? (
+        <>
+          ab <strong>{formatEuro(from)}</strong>/Monat
+        </>
+      ) : (
+        <strong>Preis auf Anfrage</strong>
+      )}
+    </span>
+  );
+}
+
+function VehicleTile({ v }: { v: Vehicle }) {
+  return (
+    <Link href={`/fahrzeuge/${v.id}`} className="fleet-tile">
+      <div className="fleet-tile-media">
+        {v.photo_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={v.photo_url} alt={v.name} />
+        )}
+      </div>
+      <div className="fleet-tile-body">
+        <h3>{v.name}</h3>
+        <p className="fleet-tile-specs">
+          {[v.transmission, v.load_volume].filter(Boolean).join(" · ")}
+        </p>
+        <div className="fleet-tile-foot">
+          <PriceLine from={cheapestPrice(v)} />
+          <span className="fleet-tile-cta">Jetzt anfragen</span>
+          <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function CatalogTile({ v }: { v: CatalogVehicle }) {
+  return (
+    <Link href={`/modelle/${v.id}`} className="fleet-tile">
+      <div className="fleet-tile-media">
+        {v.photo_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={v.photo_url} alt={vehicleTitle(v)} />
+        )}
+      </div>
+      <div className="fleet-tile-body">
+        <h3>{vehicleTitle(v)}</h3>
+        <p className="fleet-tile-specs">
+          {[v.segment, v.drivetrain, v.power].filter(Boolean).join(" · ")}
+        </p>
+        <div className="fleet-tile-foot">
+          <PriceLine from={cheapestAboPrice(v)} />
+          <span className="fleet-tile-cta">Jetzt anfragen</span>
+          <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default async function Home() {
   const [vehicles, catalogRentals] = await Promise.all([
     getVehicles(),
     getCatalogRentals(),
   ]);
+
+  const transporter = vehicles.filter(isTransporter);
+  const cars = vehicles.filter((v) => !isTransporter(v));
+  const catalogTransporter = catalogRentals.filter(isCatalogTransporter);
+  const catalogCars = catalogRentals.filter((v) => !isCatalogTransporter(v));
 
   return (
     <>
@@ -70,11 +150,11 @@ export default async function Home() {
               <span>Fair.</span>
             </h1>
             <p>
-              Transporter ab einem Monat mieten, mit Übergabe rund um die Uhr
-              und Lieferung auf Wunsch.
+              Transporter und Pkw ab einem Monat, dazu Auto-Abo, Kauf und
+              Ankauf. Übergabe rund um die Uhr, Lieferung auf Wunsch.
             </p>
             <div className="hero-actions">
-              <Link href="/#fahrzeuge" className="btn-primary btn-link">
+              <Link href="#fahrzeuge" className="btn-primary btn-link">
                 Fahrzeuge ansehen
               </Link>
               <a href="tel:+491639574116" className="btn-secondary btn-link">
@@ -100,195 +180,234 @@ export default async function Home() {
         </ul>
       </section>
 
-      <section className="section" id="fahrzeuge">
-        <h2 className="display-title">Unsere Fahrzeuge</h2>
-        <div className="fleet-duo">
-          {vehicles.map((v) => {
-            const from = cheapestPrice(v);
-            return (
-              <Link
-                key={v.id}
-                href={`/fahrzeuge/${v.id}`}
-                className="fleet-tile"
-              >
-                <div className="fleet-tile-media">
-                  {v.photo_url && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={v.photo_url} alt={v.name} />
-                  )}
-                </div>
-                <div className="fleet-tile-body">
-                  <h3>{v.name}</h3>
-                  <p className="fleet-tile-specs">
-                    {[v.transmission, v.load_volume].filter(Boolean).join(" · ")}
-                  </p>
-                  <div className="fleet-tile-foot">
-                    {from !== null ? (
-                      <span className="fleet-tile-price">
-                        ab <strong>{formatEuro(from)}</strong>/Monat
-                      </span>
-                    ) : (
-                      <span className="fleet-tile-price">
-                        <strong>Preis auf Anfrage</strong>
-                      </span>
-                    )}
-                    <span className="fleet-tile-cta">Jetzt anfragen</span>
-                    <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+      {/* 1 — Transporter mieten */}
+      <section className="band band-white" id="fahrzeuge">
+        <div className="band-inner">
+          <div className="band-head">
+            <h2 className="display-title">Transporter mieten</h2>
+            <p>
+              Kastenwagen und Hochdach ab einem Monat. Kilometerpaket dazu
+              wählen, Vollkasko ist immer drin.
+            </p>
+          </div>
 
-          {catalogRentals.map((v) => {
-            const from = cheapestAboPrice(v);
-            return (
-              <Link
-                key={v.id}
-                href={`/modelle/${v.id}`}
-                className="fleet-tile"
-              >
-                <div className="fleet-tile-media">
-                  {v.photo_url && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={v.photo_url} alt={vehicleTitle(v)} />
-                  )}
-                </div>
-                <div className="fleet-tile-body">
-                  <h3>{vehicleTitle(v)}</h3>
-                  <p className="fleet-tile-specs">
-                    {[v.segment, v.drivetrain, v.power]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </p>
-                  <div className="fleet-tile-foot">
-                    <span className="fleet-tile-price">
-                      {from !== null ? (
-                        <>
-                          ab <strong>{formatEuro(from)}</strong>/Monat
-                        </>
-                      ) : (
-                        <strong>Preis auf Anfrage</strong>
-                      )}
-                    </span>
-                    <span className="fleet-tile-cta">Jetzt anfragen</span>
-                    <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+          <div className="fleet-duo">
+            {transporter.map((v) => (
+              <VehicleTile key={v.id} v={v} />
+            ))}
+            {catalogTransporter.map((v) => (
+              <CatalogTile key={v.id} v={v} />
+            ))}
 
-          <Link href="/anfrage" className="fleet-tile">
-            <div className="fleet-tile-media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={PARTNER_IMG}
-                alt="VW Transporter und Crafter mit ZEKI RENT Kennzeichenhaltern"
-              />
-            </div>
-            <div className="fleet-tile-body">
-              <h3>Wunschfahrzeug anfragen</h3>
-              <p className="fleet-tile-specs">
-                Groß oder klein: Über unser breites Netzwerk an Partnerfirmen
-                vermieten wir dir dein Wunschfahrzeug zu unseren Bestpreisen.
-              </p>
-              <div className="fleet-tile-foot">
-                <span className="fleet-tile-cta">Anfrage stellen</span>
-                <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
+            <Link href="/anfrage" className="fleet-tile">
+              <div className="fleet-tile-media">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={PARTNER_IMG}
+                  alt="VW Transporter und Crafter mit ZEKI RENT Kennzeichenhaltern"
+                />
               </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/vormerken"
-            className="fleet-tile fleet-tile-soon fleet-tile-exclusive"
-          >
-            <span className="exclusive-tag">Exklusiv bei uns!</span>
-            <div className="fleet-tile-media">
-              <ToggSlider />
-            </div>
-            <div className="fleet-tile-body">
-              <span className="badge-soon">Coming soon</span>
-              <h3>Togg T10X &amp; T10F</h3>
-              <p className="fleet-tile-specs">
-                Vollelektrisch · bis zu 623 km Reichweite
-              </p>
-              <div className="fleet-tile-foot">
-                <span className="fleet-tile-cta">Jetzt vormerken</span>
-                <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
+              <div className="fleet-tile-body">
+                <h3>Wunschfahrzeug anfragen</h3>
+                <p className="fleet-tile-specs">
+                  Groß oder klein: Über unser breites Netzwerk an Partnerfirmen
+                  vermieten wir dir dein Wunschfahrzeug zu unseren Bestpreisen.
+                </p>
+                <div className="fleet-tile-foot">
+                  <span className="fleet-tile-cta">Anfrage stellen</span>
+                  <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         </div>
       </section>
 
-      <section className="section" id="abo">
-        <Link href="/abo" className="abo-banner">
-          <div className="abo-banner-media">
-            <TileSlider slides={ABO_SLIDES} />
+      {/* 2 — PKW mieten */}
+      <section className="band band-grey" id="pkw">
+        <div className="band-inner">
+          <div className="band-head">
+            <h2 className="display-title">Pkw mieten</h2>
+            <p>
+              Der Zweitwagen für ein paar Monate oder das Firmenauto ohne
+              Leasingvertrag. Gleiche Konditionen wie beim Transporter.
+            </p>
           </div>
-          <div className="abo-banner-copy">
-            <span className="badge-soon">Neu bei Zeki Rent</span>
-            <h2>Auto-Abo ab 6 Monaten</h2>
+
+          <div className="fleet-duo">
+            {cars.map((v) => (
+              <VehicleTile key={v.id} v={v} />
+            ))}
+            {catalogCars.map((v) => (
+              <CatalogTile key={v.id} v={v} />
+            ))}
+
+            <Link
+              href="/vormerken"
+              className="fleet-tile fleet-tile-soon fleet-tile-exclusive"
+            >
+              <span className="exclusive-tag">Exklusiv bei uns!</span>
+              <div className="fleet-tile-media">
+                <ToggSlider />
+              </div>
+              <div className="fleet-tile-body">
+                <span className="badge-soon">Coming soon</span>
+                <h3>Togg T10X &amp; T10F</h3>
+                <p className="fleet-tile-specs">
+                  Vollelektrisch · bis zu 623 km Reichweite
+                </p>
+                <div className="fleet-tile-foot">
+                  <span className="fleet-tile-cta">Jetzt vormerken</span>
+                  <p className="fleet-tile-sub">Unverbindlich &amp; kostenfrei</p>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 3 — Auto-Abo */}
+      <section className="band band-blue" id="abo">
+        <div className="band-inner">
+          <div className="band-head">
+            <h2 className="display-title">Auto-Abo</h2>
             <p>
               Ein Preis für alles: Fahrzeug, Versicherung, Wartung, Steuer und
-              Reifen. Laufzeit 6, 12, 18 oder 24 Monate. Vom Kleinwagen bis zum
-              Elektro-Transporter.
+              Reifen. Sie tanken oder laden, den Rest übernehmen wir.
             </p>
-            <span className="fleet-tile-cta">Abo entdecken</span>
           </div>
-        </Link>
-      </section>
 
-      <section className="section section-alt" id="ablauf">
-        <div className="how-split">
-          <h2 className="display-title">
-            So einfach
-            <br />
-            geht&apos;s
-          </h2>
-          <ol className="how-steps">
-            <li>
-              <strong>Fahrzeug anfragen</strong>
-              Laufzeit und Kilometerpaket wählen, unverbindlich anfragen.
-            </li>
-            <li>
-              <strong>Bestätigung erhalten</strong>
-              Wir melden uns kurzfristig und klären alle Details.
-            </li>
-            <li>
-              <strong>Losfahren</strong>
-              Vertrag digital unterschreiben, Fahrzeug rund um die Uhr
-              übernehmen. Auf Wunsch bringen wir es dir.
-            </li>
-          </ol>
+          <div className="abo-split">
+            <div className="abo-split-media">
+              <TileSlider slides={ABO_SLIDES} />
+            </div>
+            <div className="abo-split-copy">
+              <ul className="term-chips">
+                <li>6 Monate</li>
+                <li>12 Monate</li>
+                <li>18 Monate</li>
+                <li>24 Monate</li>
+              </ul>
+              <p>
+                Vom Kleinwagen bis zum Elektro-Transporter. Sie wählen Modell,
+                Laufzeit und Kilometer, wir machen Ihnen ein Angebot.
+              </p>
+              <Link href="/abo" className="btn-invert btn-link">
+                Abo entdecken
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="section" id="konditionen">
-        <h2 className="display-title">Konditionen</h2>
-        <div className="terms-clusters">
-          <div>
-            <h3>Mieten</h3>
+      {/* 4 — Kaufen und Verkaufen */}
+      <section className="band band-black" id="kaufen">
+        <div className="band-inner">
+          <div className="band-head">
+            <h2 className="display-title">Kaufen und verkaufen</h2>
             <p>
-              Kaution 1.000 € per Überweisung, zurück nach der Rückgabe.
-              Mindestalter 21 Jahre, Ausweis und Wohnsitznachweis genügen.
+              Gebrauchtwagen und Neuwagen aus unserem Bestand und über unser
+              Händlernetzwerk. Ihr altes Fahrzeug nehmen wir in Zahlung oder
+              kaufen es an.
             </p>
           </div>
-          <div>
-            <h3>Fahren</h3>
-            <p>
-              Kilometerpakete ab 1.000 km pro Monat, flexibel zubuchbar.
-              Tankregelung: voll übernehmen, voll zurückgeben.
-            </p>
+
+          <div className="trade-split">
+            <Link href="/kaufen" className="trade-panel">
+              <div className="trade-panel-media">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={SALE_IMG} alt="Transporter und Pkw zum Verkauf" />
+              </div>
+              <h3>Fahrzeug kaufen</h3>
+              <p>
+                Gebrauchtwagen und Neuwagen, auf Wunsch mit Finanzierung.
+                Probefahrt nach Terminvereinbarung.
+              </p>
+              <span className="fleet-tile-cta">Zum Angebot</span>
+            </Link>
+
+            <div className="trade-panel">
+              <h3>Fahrzeug verkaufen</h3>
+              <p>
+                Sie möchten Ihren Transporter oder Pkw abgeben? Schicken Sie uns
+                Modell, Baujahr und Kilometerstand, wir melden uns mit einem
+                Ankaufpreis. Bei einem Kauf bei uns rechnen wir ihn direkt an.
+              </p>
+              <ul className="trade-points">
+                <li>Bewertung innerhalb eines Werktags</li>
+                <li>Abholung möglich, auch bei ganzen Flotten</li>
+                <li>Abmeldung übernehmen wir</li>
+              </ul>
+              <div className="trade-actions">
+                <a href="tel:+491639574116" className="btn-invert btn-link">
+                  Jetzt anrufen
+                </a>
+                <a
+                  href="mailto:info@zeki-rent.com?subject=Fahrzeug%20verkaufen"
+                  className="btn-ghost btn-link"
+                >
+                  E-Mail schreiben
+                </a>
+              </div>
+            </div>
           </div>
-          <div>
-            <h3>Versichert</h3>
-            <p>
-              Haftpflicht und Vollkasko mit 1.000 € Selbstbeteiligung sind
-              immer dabei. Auslandsfahrten nach Absprache.
-            </p>
+        </div>
+      </section>
+
+      <section className="band band-white" id="ablauf">
+        <div className="band-inner">
+          <div className="how-split">
+            <h2 className="display-title">
+              So einfach
+              <br />
+              geht&apos;s
+            </h2>
+            <ol className="how-steps">
+              <li>
+                <strong>Fahrzeug anfragen</strong>
+                Laufzeit und Kilometerpaket wählen, unverbindlich anfragen.
+              </li>
+              <li>
+                <strong>Bestätigung erhalten</strong>
+                Wir melden uns kurzfristig und klären alle Details.
+              </li>
+              <li>
+                <strong>Losfahren</strong>
+                Vertrag digital unterschreiben, Fahrzeug rund um die Uhr
+                übernehmen. Auf Wunsch bringen wir es dir.
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section className="band band-grey" id="konditionen">
+        <div className="band-inner">
+          <div className="band-head">
+            <h2 className="display-title">Konditionen</h2>
+          </div>
+          <div className="terms-clusters">
+            <div>
+              <h3>Mieten</h3>
+              <p>
+                Kaution 1.000 € per Überweisung, zurück nach der Rückgabe.
+                Mindestalter 21 Jahre, Ausweis und Wohnsitznachweis genügen.
+              </p>
+            </div>
+            <div>
+              <h3>Fahren</h3>
+              <p>
+                Kilometerpakete ab 1.000 km pro Monat, flexibel zubuchbar.
+                Tankregelung: voll übernehmen, voll zurückgeben.
+              </p>
+            </div>
+            <div>
+              <h3>Versichert</h3>
+              <p>
+                Haftpflicht und Vollkasko mit 1.000 € Selbstbeteiligung sind
+                immer dabei. Auslandsfahrten nach Absprache.
+              </p>
+            </div>
           </div>
         </div>
       </section>
