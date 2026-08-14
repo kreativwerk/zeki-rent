@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, type Booking } from "@/lib/types";
+import { formatDate, formatEuro, type Booking } from "@/lib/types";
 import BookingStatusSelect from "@/components/admin/BookingStatusSelect";
 
 interface Prebooking {
@@ -194,7 +194,11 @@ export default async function AdminRequestsPage() {
                   <td data-label="Kilometer">
                     <div className="cell-stack">
                       <span>{b.km_package}</span>
-                      <span className="muted">{b.handover ?? "Abholung"}</span>
+                      <span className="muted">
+                        {b.handover ?? "Abholung"}
+                        {b.monthly_price != null &&
+                          ` · ${formatEuro(Number(b.monthly_price))}/Monat`}
+                      </span>
                     </div>
                   </td>
                   <td data-label="Anmerkung" className="note-cell">

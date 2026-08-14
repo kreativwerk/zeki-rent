@@ -13,9 +13,45 @@ export interface Vehicle {
   price_24m: number | null;
   /** Keine Preise auf der Website zeigen, Konditionen kommen auf Anfrage */
   price_on_request: boolean;
+  /** Waehlbare Kilometerpakete, die Monatsrate gilt fuer das kleinste */
+  km_packages: KmPackage[] | null;
   active: boolean;
   notes: string | null;
   created_at: string;
+}
+
+export interface KmPackage {
+  km: number;
+  /** Monatlicher Aufpreis in Euro gegenueber der hinterlegten Rate */
+  surcharge: number;
+}
+
+const DEFAULT_KM_PACKAGES: KmPackage[] = [{ km: 1000, surcharge: 0 }];
+
+/** Immer eine aufsteigend sortierte, gueltige Liste zurueckgeben */
+export function kmPackages(vehicle: Vehicle): KmPackage[] {
+  const raw = Array.isArray(vehicle.km_packages) ? vehicle.km_packages : [];
+  const clean = raw
+    .filter((p) => Number.isFinite(p?.km) && p.km > 0)
+    .map((p) => ({ km: Math.round(p.km), surcharge: Number(p.surcharge) || 0 }))
+    .sort((a, b) => a.km - b.km);
+  return clean.length > 0 ? clean : DEFAULT_KM_PACKAGES;
+}
+
+export function kmLabel(km: number): string {
+  return `${new Intl.NumberFormat("de-DE").format(km)} km/Monat`;
+}
+
+/** Monatsrate inklusive Kilometerpaket, null wenn Preis auf Anfrage */
+export function priceForKm(
+  vehicle: Vehicle,
+  months: number,
+  km: number
+): number | null {
+  const base = priceFor(vehicle, months);
+  if (base === null) return null;
+  const pack = kmPackages(vehicle).find((p) => p.km === km);
+  return base + (pack?.surcharge ?? 0);
 }
 
 export interface Booking {
@@ -25,6 +61,9 @@ export interface Booking {
   start_date: string;
   duration_months: number;
   km_package: string;
+  km_per_month?: number | null;
+  /** Beim Absenden berechnete Monatsrate inkl. Kilometerpaket */
+  monthly_price?: number | null;
   handover?: string | null;
   note: string | null;
   status: BookingStatus;
@@ -198,13 +237,6 @@ export const BOOKING_STATUSES: BookingStatus[] = [
 ];
 
 export const DURATIONS = [1, 3, 6, 12, 24] as const;
-
-export const KM_PACKAGES = [
-  "1.000 km/Monat",
-  "2.000 km/Monat",
-  "3.000 km/Monat",
-  "Mehr / individuell",
-];
 
 export function priceFor(vehicle: Vehicle, months: number): number | null {
   if (vehicle.price_on_request) return null;

@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { priceFor, type Vehicle } from "@/lib/types";
+import {
+  kmLabel,
+  kmPackages,
+  priceForKm,
+  type Vehicle,
+} from "@/lib/types";
 import {
   bookingSummaryHtml,
   emailLayout,
@@ -16,6 +21,7 @@ export async function POST(request: Request) {
     vehicle_id?: string;
     start_date?: string;
     duration_months?: number;
+    km_per_month?: number;
     km_package?: string;
     handover?: string;
     note?: string | null;
@@ -30,8 +36,7 @@ export async function POST(request: Request) {
     !body.vehicle_id ||
     !body.start_date ||
     !body.duration_months ||
-    !VALID_DURATIONS.includes(body.duration_months) ||
-    !body.km_package
+    !VALID_DURATIONS.includes(body.duration_months)
   ) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
@@ -61,12 +66,24 @@ export async function POST(request: Request) {
     .single();
   if (!vehicle) return NextResponse.json({ ok: false }, { status: 404 });
 
+  // Das Kilometerpaket muss zum Fahrzeug passen, der Preis kommt vom Server
+  const packages = kmPackages(vehicle as Vehicle);
+  const chosen =
+    packages.find((p) => p.km === Number(body.km_per_month)) ?? packages[0];
+  const monthlyPrice = priceForKm(
+    vehicle as Vehicle,
+    body.duration_months,
+    chosen.km
+  );
+
   const { error: insertError } = await supabase.from("bookings").insert({
     user_id: user.id,
     vehicle_id: body.vehicle_id,
     start_date: body.start_date,
     duration_months: body.duration_months,
-    km_package: body.km_package,
+    km_per_month: chosen.km,
+    km_package: kmLabel(chosen.km),
+    monthly_price: monthlyPrice,
     handover: body.handover === "Lieferung" ? "Lieferung" : "Abholung",
     note: body.note?.trim() || null,
   });
@@ -85,8 +102,8 @@ export async function POST(request: Request) {
     vehicleName: (vehicle as Vehicle).name,
     startDate: body.start_date,
     durationMonths: body.duration_months,
-    kmPackage: body.km_package,
-    monthlyPrice: priceFor(vehicle as Vehicle, body.duration_months),
+    kmPackage: kmLabel(chosen.km),
+    monthlyPrice,
     handover: body.handover,
     note: body.note,
   });

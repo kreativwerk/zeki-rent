@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import ImageUpload from "@/components/admin/ImageUpload";
-import type { Vehicle } from "@/lib/types";
+import { kmPackages, type KmPackage, type Vehicle } from "@/lib/types";
 
 const CATEGORIES = [
   "Transporter / Kastenwagen",
@@ -28,6 +28,7 @@ type FormState = {
   price_12m: string;
   price_24m: string;
   price_on_request: boolean;
+  km_packages: KmPackage[];
   active: boolean;
   notes: string;
 };
@@ -46,6 +47,7 @@ function toForm(v?: Vehicle): FormState {
     price_12m: v?.price_12m?.toString() ?? "",
     price_24m: v?.price_24m?.toString() ?? "",
     price_on_request: v?.price_on_request ?? false,
+    km_packages: v ? kmPackages(v) : [{ km: 4000, surcharge: 0 }],
     active: v?.active ?? true,
     notes: v?.notes ?? "",
   };
@@ -83,6 +85,9 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
       price_12m: num(form.price_12m),
       price_24m: num(form.price_24m),
       price_on_request: form.price_on_request,
+      km_packages: form.km_packages
+        .filter((p) => p.km > 0)
+        .sort((a, b) => a.km - b.km),
       active: form.active,
       notes: form.notes.trim() || null,
     };
@@ -263,6 +268,83 @@ export default function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
             </label>
           ))}
         </div>
+      </div>
+
+      <div className="field">
+        <label className="field-label">
+          Kilometerpakete
+          <span className="hint">
+            Die Monatsraten oben gelten für das kleinste Paket, größere kosten
+            Aufpreis
+          </span>
+        </label>
+        <div className="km-rows">
+          {form.km_packages.map((p, i) => (
+            <div key={i} className="km-row">
+              <label>
+                <span>Kilometer im Monat</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={p.km || ""}
+                  onChange={(e) => {
+                    const km = parseInt(e.target.value.replace(/\D/g, ""), 10);
+                    set(
+                      "km_packages",
+                      form.km_packages.map((x, j) =>
+                        j === i ? { ...x, km: Number.isFinite(km) ? km : 0 } : x
+                      )
+                    );
+                  }}
+                  placeholder="4000"
+                />
+              </label>
+              <label>
+                <span>Aufpreis € pro Monat</span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={p.surcharge || ""}
+                  onChange={(e) => {
+                    const s = num(e.target.value);
+                    set(
+                      "km_packages",
+                      form.km_packages.map((x, j) =>
+                        j === i ? { ...x, surcharge: s ?? 0 } : x
+                      )
+                    );
+                  }}
+                  placeholder={i === 0 ? "0" : "49"}
+                />
+              </label>
+              <button
+                type="button"
+                className="btn-icon-danger"
+                aria-label="Paket entfernen"
+                onClick={() =>
+                  set(
+                    "km_packages",
+                    form.km_packages.filter((_, j) => j !== i)
+                  )
+                }
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="btn-secondary btn-upload"
+          onClick={() =>
+            set("km_packages", [
+              ...form.km_packages,
+              { km: 0, surcharge: 0 },
+            ])
+          }
+        >
+          + Paket hinzufügen
+        </button>
       </div>
 
       <div className="field">

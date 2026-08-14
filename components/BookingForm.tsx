@@ -4,9 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   DURATIONS,
-  KM_PACKAGES,
   formatEuro,
+  kmLabel,
+  kmPackages,
   priceFor,
+  priceForKm,
   type Vehicle,
 } from "@/lib/types";
 
@@ -17,16 +19,17 @@ export default function BookingForm({
   vehicle: Vehicle;
   loggedIn: boolean;
 }) {
+  const packages = kmPackages(vehicle);
   const [duration, setDuration] = useState<number>(1);
   const [startDate, setStartDate] = useState("");
-  const [kmPackage, setKmPackage] = useState(KM_PACKAGES[0]);
+  const [km, setKm] = useState<number>(packages[0].km);
   const [handover, setHandover] = useState("Abholung");
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const price = priceFor(vehicle, duration);
+  const price = priceForKm(vehicle, duration, km);
   const today = new Date().toISOString().slice(0, 10);
 
   if (!loggedIn) {
@@ -80,7 +83,8 @@ export default function BookingForm({
         vehicle_id: vehicle.id,
         start_date: startDate,
         duration_months: duration,
-        km_package: kmPackage,
+        km_per_month: km,
+        km_package: kmLabel(km),
         handover,
         note: note.trim() || null,
       }),
@@ -136,18 +140,30 @@ export default function BookingForm({
       </div>
 
       <div className="field">
-        <label className="field-label" htmlFor="km">
-          Kilometerpaket
-        </label>
-        <select
-          id="km"
-          value={kmPackage}
-          onChange={(e) => setKmPackage(e.target.value)}
-        >
-          {KM_PACKAGES.map((p) => (
-            <option key={p}>{p}</option>
-          ))}
-        </select>
+        <label className="field-label">Kilometerpaket</label>
+        <div className="duration-pills">
+          {packages.map((p) => {
+            const base = priceFor(vehicle, duration);
+            return (
+              <button
+                key={p.km}
+                type="button"
+                className={`pill ${km === p.km ? "pill-active" : ""}`}
+                aria-pressed={km === p.km}
+                onClick={() => setKm(p.km)}
+              >
+                {new Intl.NumberFormat("de-DE").format(p.km)} km
+                {base !== null && (
+                  <span>
+                    {p.surcharge > 0
+                      ? `+${formatEuro(p.surcharge)}/M.`
+                      : "inklusive"}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="field">
@@ -181,7 +197,10 @@ export default function BookingForm({
       {price !== null ? (
         <p className="booking-total">
           Monatsrate: <strong>{formatEuro(price)}</strong>
-          <span> zzgl. Kilometerpaket</span>
+          <span>
+            {kmLabel(km)} inklusive, {duration}{" "}
+            {duration === 1 ? "Monat" : "Monate"} Laufzeit
+          </span>
         </p>
       ) : (
         <p className="booking-total">

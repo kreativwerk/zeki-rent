@@ -939,7 +939,10 @@ main {
   font-size: 0.9375rem;
 }
 
+/* Der Zusatz steht als eigene Zeile unter der Rate, sonst klebt er daran */
 .booking-total span {
+  display: block;
+  margin-top: 0.125rem;
   color: var(--muted);
   font-size: 0.8125rem;
 }
@@ -2141,6 +2144,46 @@ a.trade-panel:hover {
 
 .steps-list span {
   color: var(--muted);
+}
+
+.km-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-bottom: 0.75rem;
+}
+
+.km-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 0.625rem;
+}
+
+.km-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.km-row label span {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.km-row .btn-icon-danger {
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 560px) {
+  .km-row {
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.5rem;
+  }
+  .km-row label span {
+    font-size: 0.75rem;
+  }
 }
 
 .prep-list {

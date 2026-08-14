@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { DURATIONS, formatEuro, priceFor, type Vehicle } from "@/lib/types";
+import {
+  DURATIONS,
+  formatEuro,
+  kmLabel,
+  kmPackages,
+  priceFor,
+  type Vehicle,
+} from "@/lib/types";
 import BookingForm from "@/components/BookingForm";
 import CompanyGate from "@/components/CompanyGate";
 import { isCompanyComplete, type CompanyData } from "@/lib/company";
@@ -30,6 +37,8 @@ export default async function VehiclePage(props: {
   }
 
   if (!vehicle) notFound();
+
+  const packages = kmPackages(vehicle);
 
   try {
     const supabase = await createClient();
@@ -103,8 +112,32 @@ export default async function VehiclePage(props: {
                 </tbody>
               </table>
               <p className="fine-print">
-                Zzgl. Kilometerpaket. Kaution 1.000 €, Vollkasko mit 1.000 €
-                Selbstbeteiligung inklusive.
+                Die Raten gelten für {kmLabel(packages[0].km)}.
+                {packages.length > 1 && " Mehr Kilometer kosten Aufpreis:"}
+              </p>
+              {packages.length > 1 && (
+                <table className="price-table">
+                  <tbody>
+                    {packages.map((p) => (
+                      <tr key={p.km}>
+                        <td>{kmLabel(p.km)}</td>
+                        <td>
+                          {p.surcharge > 0 ? (
+                            <>
+                              <strong>+{formatEuro(p.surcharge)}</strong>/Monat
+                            </>
+                          ) : (
+                            <strong>inklusive</strong>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <p className="fine-print">
+                Kaution 1.000 €, Vollkasko mit 1.000 € Selbstbeteiligung
+                inklusive.
               </p>
             </>
           )}
