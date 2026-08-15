@@ -2146,10 +2146,9 @@ a.trade-panel:hover {
   color: var(--muted);
 }
 
-/* Rechtliches ist noch nicht verlinkt, sieht aber nicht wie ein toter Link aus */
-.footer-pending span {
-  font-size: 0.8125rem;
-  opacity: 0.7;
+/* Sieht aus wie ein Link, hat aber noch kein Ziel */
+.link-pending {
+  cursor: pointer;
 }
 
 .km-rows {

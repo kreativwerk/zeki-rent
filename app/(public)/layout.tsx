@@ -34,13 +34,12 @@ export default function PublicLayout({
           </div>
           <div>
             <h3>Rechtliches</h3>
-            {/* Noch nicht verlinkt: Angaben folgen mit der Gruendung */}
-            <p className="footer-pending">
-              Impressum
+            {/* Sehen aus wie Links, fuehren aber noch nirgendwohin:
+                die Seiten kommen mit der Gruendung */}
+            <p>
+              <a className="link-pending">Impressum</a>
               <br />
-              Datenschutz
-              <br />
-              <span>in Vorbereitung</span>
+              <a className="link-pending">Datenschutz</a>
             </p>
           </div>
         </div>
