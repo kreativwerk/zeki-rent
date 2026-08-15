@@ -1,4 +1,3 @@
-import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import ZekiLogo from "@/components/Logo";
 import PageViewTracker from "@/components/PageViewTracker";
@@ -35,15 +34,18 @@ export default function PublicLayout({
           </div>
           <div>
             <h3>Rechtliches</h3>
-            <p>
-              <Link href="/impressum">Impressum</Link>
+            {/* Noch nicht verlinkt: Angaben folgen mit der Gruendung */}
+            <p className="footer-pending">
+              Impressum
               <br />
-              <Link href="/datenschutz">Datenschutz</Link>
+              Datenschutz
+              <br />
+              <span>in Vorbereitung</span>
             </p>
           </div>
         </div>
         <p className="site-footer-note">
-          © {new Date().getFullYear()} Zeki Rent GmbH
+          © {new Date().getFullYear()} Zeki Rent
         </p>
       </footer>
     </>

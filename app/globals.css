@@ -2146,6 +2146,12 @@ a.trade-panel:hover {
   color: var(--muted);
 }
 
+/* Rechtliches ist noch nicht verlinkt, sieht aber nicht wie ein toter Link aus */
+.footer-pending span {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+}
+
 .km-rows {
   display: flex;
   flex-direction: column;

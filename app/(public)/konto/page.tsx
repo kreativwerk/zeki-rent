@@ -211,8 +211,7 @@ export default async function AccountPage() {
           <a href="mailto:info@zeki-rent.com">
             info@zeki-rent.com
           </a>{" "}
-          genügt. Details in der{" "}
-          <Link href="/datenschutz">Datenschutzerklärung</Link>.
+          genügt.
         </p>
       </div>
     </div>

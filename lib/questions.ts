@@ -22,7 +22,7 @@ export const steps: Step[] = [
     title: "Unternehmen & Kontakt",
     intro: "Ein paar Angaben zu Ihrem Unternehmen, damit wir Sie erreichen können.",
     fields: [
-      { id: "firma", label: "Firmenname", type: "text", required: true, placeholder: "z. B. Zeki Rent GmbH" },
+      { id: "firma", label: "Firmenname", type: "text", required: true, placeholder: "z. B. Muster Transporte" },
       { id: "ansprechpartner", label: "Ansprechpartner/in", type: "text", required: true },
       { id: "email", label: "E-Mail-Adresse", type: "email", required: true },
       { id: "telefon", label: "Telefonnummer", type: "tel", required: true },

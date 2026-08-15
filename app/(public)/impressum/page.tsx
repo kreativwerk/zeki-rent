@@ -5,7 +5,7 @@ export default function ImprintPage() {
     <div className="page-narrow legal-page">
       <h1>Impressum</h1>
       <p>
-        <strong>Zeki Rent GmbH</strong>
+        <strong>Zeki Rent</strong>
         <br />
         [Straße und Hausnummer]
         <br />

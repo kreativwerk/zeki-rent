@@ -7,7 +7,7 @@ export default function PrivacyPage() {
 
       <h2>1. Verantwortlicher</h2>
       <p>
-        Zeki Rent GmbH
+        Zeki Rent
         <br />
         [Straße und Hausnummer]
         <br />

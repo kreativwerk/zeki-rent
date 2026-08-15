@@ -402,11 +402,9 @@ export function RegisterForm({ next }: { next: string }) {
         />
         <span>
           Ich willige ein, dass meine Angaben zur Abwicklung meiner
-          Mietanfragen gespeichert und verarbeitet werden. Details in der{" "}
-          <Link href="/datenschutz" target="_blank">
-            Datenschutzerklärung
-          </Link>
-          . Die Einwilligung kann ich jederzeit widerrufen.
+          Mietanfragen gespeichert und verarbeitet werden. Die Einwilligung
+          kann ich jederzeit widerrufen, eine E-Mail an info@zeki-rent.com
+          genügt.
         </span>
       </label>
       {error && <p className="error-text">{error}</p>}
