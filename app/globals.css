@@ -71,6 +71,39 @@ body {
   padding: 0 1rem 4rem;
 }
 
+/* Startdatum-Hinweis ueber der Navigation, scrollt mit weg */
+.launch-note {
+  background: var(--accent-tint);
+  border-bottom: 1px solid var(--separator);
+  color: var(--text);
+}
+
+.launch-note-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.launch-note-dot {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.34rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.launch-note strong {
+  font-weight: 650;
+  color: var(--accent-deep);
+}
+
 /* Translucent chrome — content scrolls underneath */
 .topbar {
   position: sticky;
