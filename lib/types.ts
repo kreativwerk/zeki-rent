@@ -352,3 +352,15 @@ export interface SellOffer {
 export function sellTitle(o: SellOffer): string {
   return [o.brand, o.model].filter(Boolean).join(" ");
 }
+
+/** Enddatum eines Mietzeitraums: Start plus Laufzeit in Monaten. */
+export function endDate(startIso: string, months: number): string {
+  const d = new Date(startIso);
+  d.setMonth(d.getMonth() + months);
+  return d.toISOString().slice(0, 10);
+}
+
+/** "01.09.2026 – 01.03.2027" */
+export function formatPeriod(startIso: string, months: number): string {
+  return `${formatDate(startIso)} – ${formatDate(endDate(startIso, months))}`;
+}

@@ -7,7 +7,10 @@ export type AdminIconName =
   | "fahrzeuge"
   | "kunden"
   | "statistik"
-  | "support";
+  | "support"
+  | "profil"
+  | "verkauf"
+  | "abo";
 
 const PATHS: Record<AdminIconName, string> = {
   // grid / dashboard
@@ -32,6 +35,15 @@ const PATHS: Record<AdminIconName, string> = {
     "M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-6 1.8-6 4v2h12v-2c0-2.2-2.7-4-6-4Zm8-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 2c-.7 0-1.4.1-2 .3 1.8.9 3 2.3 3 3.9V20h5v-2c0-2.2-2.7-4-6-4Z",
   // bar chart
   statistik: "M4 20h3V10H4v10Zm6.5 0h3V4h-3v16ZM17 20h3v-7h-3v7Z",
+  // person
+  profil:
+    "M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.4-8 5.3V22h16v-2.7c0-2.9-3.6-5.3-8-5.3Z",
+  // price tag
+  verkauf:
+    "M21 11.6V4a1 1 0 0 0-1-1h-7.6a1 1 0 0 0-.7.3l-8.4 8.4a1 1 0 0 0 0 1.4l7.6 7.6a1 1 0 0 0 1.4 0l8.4-8.4a1 1 0 0 0 .3-.7ZM16.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z",
+  // refresh / subscription
+  abo:
+    "M12 5V2L8 6l4 4V7a5 5 0 0 1 5 5 4.9 4.9 0 0 1-.6 2.3l1.5 1.5A7 7 0 0 0 12 5Zm0 12a5 5 0 0 1-5-5c0-.8.2-1.6.6-2.3L6.1 8.2A7 7 0 0 0 12 19v3l4-4-4-4v3Z",
   // chat
   support:
     "M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2ZM7 9h10v2H7V9Zm0 4h7v2H7v-2Z",

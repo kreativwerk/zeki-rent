@@ -4319,3 +4319,121 @@ a.fleet-tile:hover {
   font-size: 0.8125rem;
   color: var(--error);
 }
+
+/* ---------- Kundenkonto: Profilmenue und Dashboard ---------- */
+
+.account-menu {
+  position: relative;
+}
+
+.account-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.375rem;
+  height: 2.375rem;
+  border-radius: 999px;
+  border: 1px solid var(--separator);
+  background: var(--card);
+  color: var(--accent-deep);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.account-avatar:hover {
+  border-color: var(--accent);
+}
+
+.account-avatar:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.account-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 20;
+  min-width: 15rem;
+  padding: 0.375rem;
+  background: var(--card);
+  border: 1px solid var(--separator);
+  border-radius: 0.875rem;
+  box-shadow: 0 12px 32px rgba(28, 28, 30, 0.16);
+}
+
+.account-dropdown-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.625rem 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--separator);
+  margin-bottom: 0.25rem;
+  color: var(--muted);
+}
+
+.account-dropdown-head div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.account-dropdown-head strong {
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.account-dropdown-head span {
+  font-size: 0.8125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-dropdown a,
+.account-dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.625rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: var(--fill);
+}
+
+.account-dropdown button {
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--separator);
+  border-radius: 0 0 0.5rem 0.5rem;
+  color: var(--accent-deep);
+  font-weight: 600;
+}
+
+.account-todo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+
+.account-todo p {
+  margin: 0;
+  max-width: 34rem;
+}
+
+/* Dashboard-Kacheln ohne Zahl bekommen die gleiche Hoehe wie die mit Zahl */
+.dash-tile .dash-label {
+  margin-top: auto;
+}

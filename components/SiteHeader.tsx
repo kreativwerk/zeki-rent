@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import ZekiLogo from "@/components/Logo";
+import AccountMenu from "@/components/AccountMenu";
 
 export default async function SiteHeader() {
   let user = null;
   let isAdmin = false;
+  let profileName: string | null = null;
   try {
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
@@ -12,6 +14,14 @@ export default async function SiteHeader() {
     if (user) {
       const { data: admin } = await supabase.rpc("is_admin");
       isAdmin = admin === true;
+      if (!isAdmin) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("name")
+          .eq("id", user.id)
+          .maybeSingle();
+        profileName = profile?.name ?? null;
+      }
     }
   } catch {
     // Ohne Verbindung: öffentliche Navigation anzeigen
@@ -38,18 +48,7 @@ export default async function SiteHeader() {
           )}
           {user ? (
             !isAdmin && (
-              <Link href="/konto" className="btn-small btn-cta">
-                Mein Konto
-                <svg
-                  viewBox="0 0 24 24"
-                  width="18"
-                  height="18"
-                  fill="currentColor"
-                  aria-hidden
-                >
-                  <path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" />
-                </svg>
-              </Link>
+              <AccountMenu name={profileName} email={user.email ?? null} />
             )
           ) : (
             <>

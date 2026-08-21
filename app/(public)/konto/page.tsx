@@ -4,15 +4,52 @@ import { createClient } from "@/lib/supabase/server";
 import {
   STATUS_LABEL,
   formatDate,
-  formatKm,
   type Booking,
   type Profile,
   type SellOffer,
 } from "@/lib/types";
-import { LogoutButton } from "@/components/AuthForms";
-import CompanyForm from "@/components/CompanyForm";
+import { isCompanyComplete } from "@/lib/company";
+import AdminIcon, { type AdminIconName } from "@/components/admin/AdminIcon";
 
 export const metadata = { title: "Mein Konto – Zeki Rent" };
+
+interface Entry {
+  id: string;
+  label: string;
+  date: string;
+  status: string;
+}
+
+function Tile({
+  href,
+  icon,
+  label,
+  value,
+  hint,
+  alert,
+}: {
+  href: string;
+  icon: AdminIconName;
+  label: string;
+  value?: string;
+  hint?: string;
+  alert?: boolean;
+}) {
+  return (
+    <Link href={href} className="dash-tile">
+      <span className="dash-icon">
+        <AdminIcon name={icon} size={20} />
+      </span>
+      {value && <span className="dash-value">{value}</span>}
+      <span className="dash-label">{label}</span>
+      {hint && (
+        <span className={alert ? "dash-hint dash-hint-alert" : "dash-hint"}>
+          {hint}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -28,250 +65,198 @@ export default async function AccountPage() {
     { data: generalRequests },
     { data: sellOffers },
   ] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", user.id).single(),
-      supabase
-        .from("bookings")
-        .select("*, vehicles(name)")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("prebookings")
-        .select("*")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("general_requests")
-        .select("*")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("sell_offers")
-        .select("*")
-        .order("created_at", { ascending: false }),
-    ]);
+    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    supabase
+      .from("bookings")
+      .select("*, vehicles(name)")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("prebookings")
+      .select("*")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("general_requests")
+      .select("*")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("sell_offers")
+      .select("*")
+      .order("created_at", { ascending: false }),
+  ]);
 
   const p = profile as Profile | null;
-  const list = (bookings ?? []) as Booking[];
+  const bookingList = (bookings ?? []) as Booking[];
+  const offerList = (sellOffers ?? []) as SellOffer[];
   const prebookList = (prebookings ?? []) as Array<{
     id: string;
     model: string;
     status: string;
     created_at: string;
   }>;
-  const offerList = (sellOffers ?? []) as SellOffer[];
   const requestList = (generalRequests ?? []) as Array<{
     id: string;
     vehicle_wish: string | null;
     large_vans: Record<string, number> | null;
     small_vans: number | null;
-    km_per_month: string | null;
-    fuel_type: string | null;
-    start_from: string | null;
-    handover: string | null;
     status: string;
     created_at: string;
   }>;
 
+  const requestCount =
+    bookingList.length + requestList.length + prebookList.length;
+  const openCount = [...bookingList, ...requestList, ...prebookList].filter(
+    (r) => r.status === "neu",
+  ).length;
+  const dataComplete = isCompanyComplete(p);
+  const firstName = p?.name?.trim().split(/\s+/)[0] ?? null;
+
+  // Die fünf jüngsten Vorgänge quer über alle Arten
+  const recent: Entry[] = [
+    ...bookingList.map((b) => ({
+      id: `b-${b.id}`,
+      label: b.vehicles?.name ?? "Fahrzeuganfrage",
+      date: b.created_at,
+      status: b.status,
+    })),
+    ...requestList.map((r) => ({
+      id: `r-${r.id}`,
+      label: r.vehicle_wish || "Wunschfahrzeug",
+      date: r.created_at,
+      status: r.status,
+    })),
+    ...offerList.map((o) => ({
+      id: `o-${o.id}`,
+      label: `${o.brand} ${o.model} verkaufen`,
+      date: o.created_at,
+      status: o.status,
+    })),
+    ...prebookList.map((pb) => ({
+      id: `p-${pb.id}`,
+      label: `${pb.model} vorgemerkt`,
+      date: pb.created_at,
+      status: pb.status,
+    })),
+  ]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 5);
+
   return (
-    <div className="page-narrow">
+    <div className="page-narrow page-wide">
       <div className="account-header">
-        <h1>Mein Konto</h1>
-        <LogoutButton />
+        <div>
+          <h1>{firstName ? `Hallo, ${firstName}` : "Mein Konto"}</h1>
+          <p className="muted">
+            {openCount > 0
+              ? `${openCount} ${openCount === 1 ? "Vorgang ist" : "Vorgänge sind"} bei uns in Arbeit.`
+              : "Schön, dass Sie da sind. Womit können wir helfen?"}
+          </p>
+        </div>
+      </div>
+
+      {!dataComplete && (
+        <div className="card account-todo">
+          <p>
+            <strong>Noch eine Kleinigkeit:</strong> Für Angebote und Verträge
+            brauchen wir einmalig Ihre Rechnungsdaten.
+          </p>
+          <Link href="/konto/profil" className="btn-primary btn-link">
+            Jetzt vervollständigen
+          </Link>
+        </div>
+      )}
+
+      <div className="dash-grid">
+        <Tile
+          href="/konto/anfragen"
+          icon="anfragen"
+          label="Meine Anfragen"
+          value={String(requestCount)}
+          hint={openCount > 0 ? `${openCount} offen` : "alle bearbeitet"}
+          alert={openCount > 0}
+        />
+        <Tile
+          href="/#fahrzeuge"
+          icon="fahrzeuge"
+          label="Fahrzeug mieten"
+          hint="Transporter und Pkw ab 1 Monat"
+        />
+        <Tile
+          href="/abo"
+          icon="abo"
+          label="Auto-Abo"
+          hint="6, 12 Monate oder länger"
+        />
+        <Tile
+          href="/kaufen"
+          icon="buchungen"
+          label="Fahrzeug kaufen"
+          hint="Gebraucht- und Neuwagen"
+        />
+        <Tile
+          href="/verkaufen"
+          icon="verkauf"
+          label="Fahrzeug verkaufen"
+          value={offerList.length > 0 ? String(offerList.length) : undefined}
+          hint={
+            offerList.length > 0
+              ? "Ihre Angebote ansehen"
+              : "Eckdaten und Fotos hochladen"
+          }
+        />
+        <Tile
+          href="/konto/profil"
+          icon="profil"
+          label="Profil"
+          hint={dataComplete ? "Daten sind vollständig" : "Daten ergänzen"}
+          alert={!dataComplete}
+        />
       </div>
 
       <div className="card">
-        <h2>Meine Anfragen</h2>
-        {list.length === 0 ? (
+        <h2>Zuletzt</h2>
+        {recent.length === 0 ? (
           <p className="empty-state">
-            Noch keine Anfragen.{" "}
+            Hier ist noch nichts passiert.{" "}
             <Link href="/#fahrzeuge">Jetzt Fahrzeug auswählen →</Link>
           </p>
         ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Fahrzeug</th>
-                <th>Start</th>
-                <th>Laufzeit</th>
-                <th>Kilometer</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.map((b) => (
-                <tr key={b.id}>
-                  <td>{b.vehicles?.name ?? "–"}</td>
-                  <td>{formatDate(b.start_date)}</td>
-                  <td>
-                    {b.duration_months}{" "}
-                    {b.duration_months === 1 ? "Monat" : "Monate"}
-                  </td>
-                  <td>
-                    {b.km_package}
-                    <br />
-                    <span className="muted">{b.handover ?? "Abholung"}</span>
-                  </td>
-                  <td>
-                    <span className={`status status-${b.status}`}>
-                      {b.status}
-                    </span>
-                  </td>
-                </tr>
+          <>
+            <ul className="recent-list">
+              {recent.map((e) => (
+                <li key={e.id}>
+                  <div className="cell-stack">
+                    <strong>{e.label}</strong>
+                    <span className="muted">{formatDate(e.date)}</span>
+                  </div>
+                  <span className={`status status-${e.status}`}>
+                    {STATUS_LABEL[e.status] ?? e.status}
+                  </span>
+                </li>
               ))}
-            </tbody>
-          </table>
+            </ul>
+            <Link href="/konto/anfragen" className="btn-secondary btn-link">
+              Alle Anfragen ansehen
+            </Link>
+          </>
         )}
       </div>
 
-      {requestList.length > 0 && (
-        <div className="card">
-          <h2>Meine Fahrzeug-Anfragen</h2>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Fahrzeuge</th>
-                <th>Details</th>
-                <th>Angefragt am</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requestList.map((r) => (
-                <tr key={r.id}>
-                  <td>
-                    <strong>
-                      {[
-                        ...Object.entries(r.large_vans ?? {})
-                          .filter(([, n]) => n > 0)
-                          .map(([size, n]) => `${n}× ${size}`),
-                        ...(r.small_vans
-                          ? [`${r.small_vans}× Kleintransporter`]
-                          : []),
-                      ].join(", ") ||
-                        r.vehicle_wish ||
-                        "–"}
-                    </strong>
-                  </td>
-                  <td className="muted">
-                    {[r.km_per_month, r.fuel_type, r.start_from, r.handover]
-                      .filter(Boolean)
-                      .join(" · ") || "–"}
-                  </td>
-                  <td>{formatDate(r.created_at)}</td>
-                  <td>
-                    <span className="status status-neu">{r.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {offerList.length > 0 && (
-        <div className="card">
-          <h2>Meine Verkaufsangebote</h2>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Fahrzeug</th>
-                <th>Eckdaten</th>
-                <th>Angeboten am</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {offerList.map((o) => (
-                <tr key={o.id}>
-                  <td>
-                    <strong>
-                      {o.brand} {o.model}
-                    </strong>
-                  </td>
-                  <td className="muted">
-                    {[
-                      o.build_year && `BJ ${o.build_year}`,
-                      formatKm(o.mileage_km),
-                      o.power,
-                    ]
-                      .filter(Boolean)
-                      .join(" · ") || "–"}
-                  </td>
-                  <td>{formatDate(o.created_at)}</td>
-                  <td>
-                    <span className={`status status-${o.status}`}>
-                      {STATUS_LABEL[o.status] ?? o.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="fine-print">
-            Wir sehen uns Ihr Fahrzeug an und melden uns mit einer
-            Einschätzung.
-          </p>
-        </div>
-      )}
-
-      {prebookList.length > 0 && (
-        <div className="card">
-          <h2>Meine Vormerkungen</h2>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Fahrzeug</th>
-                <th>Vorgemerkt am</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prebookList.map((pb) => (
-                <tr key={pb.id}>
-                  <td>
-                    <strong>{pb.model}</strong>
-                  </td>
-                  <td>{formatDate(pb.created_at)}</td>
-                  <td>
-                    <span className="status status-neu">
-                      {pb.status === "neu" ? "vorgemerkt" : pb.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="fine-print">
-            Wir melden uns, sobald das Fahrzeug verfügbar ist.
-          </p>
-        </div>
-      )}
-
       <div className="card">
-        <h2>Firmen- &amp; Rechnungsdaten</h2>
+        <h2>Fragen?</h2>
         <p className="step-intro">
-          Diese Angaben verwenden wir für Angebote, Verträge und Rechnungen.
+          Rufen Sie uns an oder schreiben Sie kurz, wir melden uns zeitnah.
         </p>
-        <CompanyForm initial={p} />
-      </div>
-
-      <div className="card">
-        <h2>Meine Daten</h2>
-        <dl className="data-list">
-          <dt>Name</dt>
-          <dd>{p?.name ?? "–"}</dd>
-          <dt>E-Mail</dt>
-          <dd>{p?.email ?? user.email}</dd>
-          <dt>Telefon</dt>
-          <dd>{p?.phone ?? "–"}</dd>
-          <dt>Einwilligung erteilt</dt>
-          <dd>{p?.consent_at ? formatDate(p.consent_at) : "–"}</dd>
-        </dl>
-        <p className="fine-print">
-          Sie können jederzeit Auskunft, Berichtigung oder Löschung Ihrer
-          Daten verlangen. Eine kurze E-Mail an{" "}
-          <a href="mailto:info@zeki-rent.com">
+        <div className="abo-contact">
+          <a href="tel:+491639574116" className="btn-secondary btn-link">
+            0163 9574116
+          </a>
+          <a
+            href="mailto:info@zeki-rent.com"
+            className="btn-secondary btn-link"
+          >
             info@zeki-rent.com
-          </a>{" "}
-          genügt.
-        </p>
+          </a>
+        </div>
       </div>
     </div>
   );
