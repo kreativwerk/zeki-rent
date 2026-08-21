@@ -57,6 +57,11 @@ export default async function SaleVehiclePage(props: {
     console.error("Profil konnte nicht geladen werden:", err);
   }
 
+  // Hauptfoto steht schon oben, hier nur die weiteren Bilder
+  const gallery = (vehicle.photo_urls ?? []).filter(
+    (u) => u && u !== vehicle!.photo_url,
+  );
+
   const rows = [
     ["Erstzulassung", vehicle.first_registration],
     ["Kilometerstand", formatKm(vehicle.mileage_km)],
@@ -98,6 +103,20 @@ export default async function SaleVehiclePage(props: {
               alt={saleTitle(vehicle)}
               style={{ width: "100%", borderRadius: "1rem", margin: "1rem 0" }}
             />
+          )}
+
+          {gallery.length > 0 && (
+            <div className="sale-gallery">
+              {gallery.map((url, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={url}
+                  src={url}
+                  alt={`${saleTitle(vehicle)}, Foto ${i + 2}`}
+                  loading="lazy"
+                />
+              ))}
+            </div>
           )}
 
           {vehicle.description && (

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatEuro, formatKm, type Booking } from "@/lib/types";
 import RequestStatusSelect from "@/components/admin/RequestStatusSelect";
 import ArchiveButton from "@/components/admin/ArchiveButton";
+import PublishOfferButton from "@/components/admin/PublishOfferButton";
 
 interface Prebooking {
   id: string;
@@ -79,6 +80,7 @@ interface SellOfferRow {
   price_expectation: number | null;
   note: string | null;
   photo_urls: string[];
+  sale_vehicle_id: string | null;
   status: string;
   archived_at: string | null;
   created_at: string;
@@ -407,6 +409,10 @@ export default async function AdminRequestsPage({
                     />
                   </td>
                   <td className="action-cell">
+                    <PublishOfferButton
+                      id={o.id}
+                      saleVehicleId={o.sale_vehicle_id}
+                    />
                     <ArchiveButton
                       kind="verkauf"
                       id={o.id}

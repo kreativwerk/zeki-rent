@@ -30,6 +30,7 @@ function toForm(v?: SaleVehicle) {
     price_on_request: v?.price_on_request ?? true,
     vat_note: v?.vat_note ?? "",
     photo_url: v?.photo_url ?? "",
+    photo_urls: v?.photo_urls ?? [],
     active: v?.active ?? false,
   };
 }
@@ -83,7 +84,8 @@ export default function SaleVehicleForm({ vehicle }: { vehicle?: SaleVehicle }) 
       price: num(f.price),
       price_on_request: f.price_on_request,
       vat_note: f.vat_note || null,
-      photo_url: f.photo_url.trim() || null,
+      photo_url: f.photo_url.trim() || f.photo_urls[0] || null,
+      photo_urls: f.photo_urls,
       active: f.active,
     };
 
@@ -382,6 +384,65 @@ export default function SaleVehicleForm({ vehicle }: { vehicle?: SaleVehicle }) 
         {f.photo_url && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={f.photo_url} alt="Vorschau" className="photo-preview" />
+        )}
+      </div>
+
+      <div className="field">
+        <span className="field-label">
+          Weitere Fotos{" "}
+          <span className="hint">
+            erscheinen auf der Detailseite, Klick macht ein Bild zum Hauptfoto
+          </span>
+        </span>
+        <ImageUpload
+          bucket="vehicle-photos"
+          folder="verkauf"
+          multiple
+          returnPublicUrl
+          label="Bilder hochladen"
+          onUploaded={(urls) =>
+            setF((st) => ({
+              ...st,
+              photo_urls: [...st.photo_urls, ...urls].slice(0, 12),
+              photo_url: st.photo_url || urls[0] || "",
+            }))
+          }
+        />
+        {f.photo_urls.length > 0 && (
+          <div className="thumb-row">
+            {f.photo_urls.map((url) => (
+              <button
+                key={url}
+                type="button"
+                className={
+                  url === f.photo_url ? "thumb-pick thumb-main" : "thumb-pick"
+                }
+                title={
+                  url === f.photo_url
+                    ? "Hauptfoto"
+                    : "Als Hauptfoto verwenden"
+                }
+                onClick={() => set("photo_url", url)}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" />
+              </button>
+            ))}
+          </div>
+        )}
+        {f.photo_urls.length > 0 && (
+          <button
+            type="button"
+            className="btn-text-danger"
+            onClick={() =>
+              setF((st) => ({
+                ...st,
+                photo_urls: st.photo_urls.filter((u) => u !== st.photo_url),
+              }))
+            }
+          >
+            Hauptfoto aus der Galerie entfernen
+          </button>
         )}
       </div>
 

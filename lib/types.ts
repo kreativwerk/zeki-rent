@@ -164,6 +164,7 @@ export interface SaleVehicle {
   /** null, 'ausweisbar' oder 'differenzbesteuert' */
   vat_note: string | null;
   photo_url: string | null;
+  photo_urls: string[];
   active: boolean;
   sort_order: number;
   created_at: string;
