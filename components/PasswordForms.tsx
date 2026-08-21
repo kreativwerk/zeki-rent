@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import Captcha, { captchaEnabled } from "@/components/Captcha";
 
 /** Schritt 1: Link zum Zuruecksetzen anfordern. */
 export function ForgotPasswordForm() {
@@ -11,15 +12,24 @@ export function ForgotPasswordForm() {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const takeToken = useCallback((t: string | null) => setCaptchaToken(t), []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (captchaEnabled && !captchaToken) {
+      setError("Bitte bestätigen Sie kurz, dass Sie kein Roboter sind.");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     const supabase = createClient();
     const { error: authError } = await supabase.auth.resetPasswordForEmail(
       email.trim(),
-      { redirectTo: `${window.location.origin}/passwort-neu` },
+      {
+        redirectTo: `${window.location.origin}/passwort-neu`,
+        ...(captchaToken ? { captchaToken } : {}),
+      },
     );
     setSubmitting(false);
     if (authError) {
@@ -60,6 +70,7 @@ export function ForgotPasswordForm() {
           required
         />
       </div>
+      <Captcha onToken={takeToken} />
       {error && <p className="error-text">{error}</p>}
       <button type="submit" className="btn-primary btn-block" disabled={submitting}>
         {submitting ? "Wird gesendet …" : "Link anfordern"}

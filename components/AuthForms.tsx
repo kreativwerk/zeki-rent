@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import Captcha, { HoneyPot, captchaEnabled } from "@/components/Captcha";
+import { checkHuman, isDisposableEmail } from "@/lib/spam";
 
 export function LoginForm({ next }: { next: string }) {
   const router = useRouter();
@@ -11,15 +13,22 @@ export function LoginForm({ next }: { next: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const takeToken = useCallback((t: string | null) => setCaptchaToken(t), []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (captchaEnabled && !captchaToken) {
+      setError("Bitte bestätigen Sie kurz, dass Sie kein Roboter sind.");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     const supabase = createClient();
     const { error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: captchaToken ? { captchaToken } : undefined,
     });
     if (authError) {
       setError("Anmeldung fehlgeschlagen. Bitte prüfen Sie E-Mail und Passwort.");
@@ -58,6 +67,7 @@ export function LoginForm({ next }: { next: string }) {
           required
         />
       </div>
+      <Captcha onToken={takeToken} />
       {error && <p className="error-text">{error}</p>}
       <button type="submit" className="btn-primary btn-block" disabled={submitting}>
         {submitting ? "Wird angemeldet …" : "Anmelden"}
@@ -110,6 +120,7 @@ export function RegisterForm({ next }: { next: string }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordRepeat, setPasswordRepeat] = useState("");
   const [billingStreet, setBillingStreet] = useState("");
   const [billingZip, setBillingZip] = useState("");
   const [billingCity, setBillingCity] = useState("");
@@ -121,13 +132,29 @@ export function RegisterForm({ next }: { next: string }) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [confirmHint, setConfirmHint] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const takeToken = useCallback((t: string | null) => setCaptchaToken(t), []);
+  // Zeitpunkt, an dem das Formular geoeffnet wurde – gegen Bots
+  const openedAt = useRef(Date.now());
 
   const business = customerType === "gewerblich";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    // Erst die Eingaben pruefen, damit Meldungen hilfreich bleiben
+    if (password !== passwordRepeat) {
+      setError("Die beiden Passwörter stimmen nicht überein.");
+      return;
+    }
     if (business && !companyName.trim()) {
       setError("Bitte tragen Sie Ihren Firmennamen ein.");
+      return;
+    }
+    if (isDisposableEmail(email)) {
+      setError(
+        "Bitte verwenden Sie eine dauerhafte E-Mail-Adresse, an Wegwerf-Adressen können wir keine Angebote schicken."
+      );
       return;
     }
     if (!deliverySame && (!deliveryStreet.trim() || !deliveryZip.trim() || !deliveryCity.trim())) {
@@ -136,6 +163,15 @@ export function RegisterForm({ next }: { next: string }) {
     }
     if (!consent) {
       setError("Bitte stimmen Sie der Datenverarbeitung zu.");
+      return;
+    }
+    const notHuman = checkHuman(honeypot, openedAt.current);
+    if (notHuman) {
+      setError(notHuman);
+      return;
+    }
+    if (captchaEnabled && !captchaToken) {
+      setError("Bitte bestätigen Sie kurz, dass Sie kein Roboter sind.");
       return;
     }
     setSubmitting(true);
@@ -160,8 +196,9 @@ export function RegisterForm({ next }: { next: string }) {
           delivery_zip: deliverySame ? "" : deliveryZip.trim(),
           delivery_city: deliverySame ? "" : deliveryCity.trim(),
         },
-        // Confirmation link returns to the live site, not localhost
+        // Falls die E-Mail-Bestaetigung doch aktiv ist: zurueck zur Website
         emailRedirectTo: `${window.location.origin}/login`,
+        ...(captchaToken ? { captchaToken } : {}),
       },
     });
     if (authError) {
@@ -188,8 +225,9 @@ export function RegisterForm({ next }: { next: string }) {
       <div className="auth-form">
         <h3>Fast geschafft!</h3>
         <p>
-          Wir haben Ihnen eine Bestätigungs-E-Mail geschickt. Bitte klicken Sie
-          auf den Link darin und melden Sie sich anschließend an.
+          Ihr Konto ist angelegt. Wir haben Ihnen noch eine Bestätigungs-E-Mail
+          geschickt – bitte klicken Sie auf den Link darin und melden Sie sich
+          anschließend an.
         </p>
         <Link href={`/login?next=${encodeURIComponent(next)}`} className="btn-primary btn-link btn-block">
           Zur Anmeldung
@@ -294,6 +332,28 @@ export function RegisterForm({ next }: { next: string }) {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+      </div>
+      <div className="field">
+        <label className="field-label" htmlFor="password-repeat">
+          Passwort wiederholen
+        </label>
+        <input
+          id="password-repeat"
+          type="password"
+          autoComplete="new-password"
+          minLength={8}
+          value={passwordRepeat}
+          onChange={(e) => setPasswordRepeat(e.target.value)}
+          aria-invalid={
+            passwordRepeat.length > 0 && password !== passwordRepeat
+          }
+          required
+        />
+        {passwordRepeat.length > 0 && password !== passwordRepeat && (
+          <p className="field-hint-error">
+            Die beiden Passwörter stimmen noch nicht überein.
+          </p>
+        )}
       </div>
 
       <h3 className="auth-section">Rechnungsanschrift</h3>
@@ -410,6 +470,8 @@ export function RegisterForm({ next }: { next: string }) {
           genügt.
         </span>
       </label>
+      <HoneyPot value={honeypot} onChange={setHoneypot} />
+      <Captcha onToken={takeToken} />
       {error && <p className="error-text">{error}</p>}
       <button type="submit" className="btn-primary btn-block" disabled={submitting}>
         {submitting ? "Konto wird erstellt …" : "Konto erstellen"}
