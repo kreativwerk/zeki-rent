@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, type Booking, type Profile } from "@/lib/types";
+import {
+  STATUS_LABEL,
+  formatDate,
+  formatKm,
+  type Booking,
+  type Profile,
+  type SellOffer,
+} from "@/lib/types";
 import { LogoutButton } from "@/components/AuthForms";
 import CompanyForm from "@/components/CompanyForm";
 
@@ -19,6 +26,7 @@ export default async function AccountPage() {
     { data: bookings },
     { data: prebookings },
     { data: generalRequests },
+    { data: sellOffers },
   ] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).single(),
       supabase
@@ -33,6 +41,10 @@ export default async function AccountPage() {
         .from("general_requests")
         .select("*")
         .order("created_at", { ascending: false }),
+      supabase
+        .from("sell_offers")
+        .select("*")
+        .order("created_at", { ascending: false }),
     ]);
 
   const p = profile as Profile | null;
@@ -43,6 +55,7 @@ export default async function AccountPage() {
     status: string;
     created_at: string;
   }>;
+  const offerList = (sellOffers ?? []) as SellOffer[];
   const requestList = (generalRequests ?? []) as Array<{
     id: string;
     vehicle_wish: string | null;
@@ -149,6 +162,52 @@ export default async function AccountPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {offerList.length > 0 && (
+        <div className="card">
+          <h2>Meine Verkaufsangebote</h2>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Fahrzeug</th>
+                <th>Eckdaten</th>
+                <th>Angeboten am</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {offerList.map((o) => (
+                <tr key={o.id}>
+                  <td>
+                    <strong>
+                      {o.brand} {o.model}
+                    </strong>
+                  </td>
+                  <td className="muted">
+                    {[
+                      o.build_year && `BJ ${o.build_year}`,
+                      formatKm(o.mileage_km),
+                      o.power,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ") || "–"}
+                  </td>
+                  <td>{formatDate(o.created_at)}</td>
+                  <td>
+                    <span className={`status status-${o.status}`}>
+                      {STATUS_LABEL[o.status] ?? o.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="fine-print">
+            Wir sehen uns Ihr Fahrzeug an und melden uns mit einer
+            Einschätzung.
+          </p>
         </div>
       )}
 

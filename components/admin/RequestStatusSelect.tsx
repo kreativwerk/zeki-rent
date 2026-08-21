@@ -2,27 +2,33 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BOOKING_STATUSES, type BookingStatus } from "@/lib/types";
+import { REQUEST_STATUSES, STATUS_LABEL, type RequestKind } from "@/lib/types";
 
-export default function BookingStatusSelect({
+/**
+ * Status einer Anfrage aendern. Bei "bestätigt" und "abgelehnt" verschickt
+ * der Server automatisch eine Info-Mail an die Kundschaft.
+ */
+export default function RequestStatusSelect({
+  kind,
   id,
   status,
 }: {
+  kind: RequestKind;
   id: string;
-  status: BookingStatus;
+  status: string;
 }) {
   const router = useRouter();
-  const [value, setValue] = useState<BookingStatus>(status);
+  const [value, setValue] = useState(status);
   const [saving, setSaving] = useState(false);
 
-  async function change(next: BookingStatus) {
+  async function change(next: string) {
     const previous = value;
     setValue(next);
     setSaving(true);
-    const res = await fetch("/api/bookings/status", {
+    const res = await fetch("/api/requests/status", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status: next }),
+      body: JSON.stringify({ kind, id, status: next }),
     }).catch(() => null);
     setSaving(false);
     if (!res?.ok) {
@@ -38,11 +44,12 @@ export default function BookingStatusSelect({
       className={`status-select status-${value}`}
       value={value}
       disabled={saving}
-      onChange={(e) => change(e.target.value as BookingStatus)}
+      aria-label="Status"
+      onChange={(e) => change(e.target.value)}
     >
-      {BOOKING_STATUSES.map((s) => (
+      {REQUEST_STATUSES[kind].map((s) => (
         <option key={s} value={s}>
-          {s}
+          {STATUS_LABEL[s] ?? s}
         </option>
       ))}
     </select>

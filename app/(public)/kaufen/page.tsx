@@ -135,6 +135,27 @@ export default async function SalePage() {
         />
       </section>
 
+      <section className="section" id="verkaufen">
+        <h2 className="display-title">Fahrzeug verkaufen</h2>
+        <div className="card">
+          <p className="sale-section-intro">
+            Sie möchten Ihren Pkw oder Transporter abgeben? Tragen Sie Modell,
+            Baujahr, Kilometerstand, Zustand, Leistung und TÜV ein, laden Sie
+            Fotos hoch und nennen Sie uns den Besichtigungs- oder Abholort. Wir
+            melden uns mit einer Einschätzung. Ihre Kontaktdaten bleiben bei
+            uns.
+          </p>
+          <div className="abo-contact">
+            <Link href="/verkaufen" className="btn-primary btn-link">
+              Fahrzeug anbieten
+            </Link>
+            <a href="tel:+491639574116" className="btn-secondary btn-link">
+              Lieber anrufen
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section className="section">
         <h2 className="display-title">Gut zu wissen</h2>
         <ul className="abo-included">

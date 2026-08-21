@@ -36,23 +36,31 @@ export default async function SiteHeader() {
               Admin
             </Link>
           )}
-          {user && !isAdmin && (
-            <Link href="/konto" className="btn-small btn-small-secondary">
-              Mein Konto
-            </Link>
+          {user ? (
+            !isAdmin && (
+              <Link href="/konto" className="btn-small btn-cta">
+                Mein Konto
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" />
+                </svg>
+              </Link>
+            )
+          ) : (
+            <>
+              <Link href="/login" className="btn-small btn-small-secondary">
+                Anmelden
+              </Link>
+              <Link href="/registrieren" className="btn-small btn-cta">
+                Registrieren
+              </Link>
+            </>
           )}
-          <Link href="/#fahrzeuge" className="btn-small btn-cta">
-            Jetzt mieten
-            <svg
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              fill="currentColor"
-              aria-hidden
-            >
-              <path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" />
-            </svg>
-          </Link>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, type Booking, type Vehicle } from "@/lib/types";
 import VehicleForm from "@/components/admin/VehicleForm";
-import BookingStatusSelect from "@/components/admin/BookingStatusSelect";
+import RequestStatusSelect from "@/components/admin/RequestStatusSelect";
 
 function endDate(start: string, months: number): string {
   const d = new Date(start);
@@ -76,7 +76,7 @@ export default async function EditVehiclePage(props: {
                   </td>
                   <td>{b.km_package}</td>
                   <td>
-                    <BookingStatusSelect id={b.id} status={b.status} />
+                    <RequestStatusSelect kind="buchung" id={b.id} status={b.status} />
                   </td>
                 </tr>
               ))}

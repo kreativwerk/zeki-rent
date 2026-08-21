@@ -349,8 +349,8 @@ export default async function Home() {
             <div className="trade-panel">
               <h3>Fahrzeug verkaufen</h3>
               <p>
-                Sie möchten Ihren Transporter oder Pkw abgeben? Schicken Sie uns
-                Modell, Baujahr und Kilometerstand, wir melden uns mit einem
+                Sie möchten Ihren Transporter oder Pkw abgeben? Fahrzeugdaten
+                und Fotos laden Sie selbst hoch, wir melden uns mit einem
                 Ankaufpreis. Bei einem Kauf bei uns rechnen wir ihn direkt an.
               </p>
               <ul className="trade-points">
@@ -359,14 +359,11 @@ export default async function Home() {
                 <li>Abmeldung übernehmen wir</li>
               </ul>
               <div className="trade-actions">
-                <a href="tel:+491639574116" className="btn-invert btn-link">
+                <Link href="/verkaufen" className="btn-invert btn-link">
+                  Fahrzeug anbieten
+                </Link>
+                <a href="tel:+491639574116" className="btn-ghost btn-link">
                   Jetzt anrufen
-                </a>
-                <a
-                  href="mailto:info@zeki-rent.com?subject=Fahrzeug%20verkaufen"
-                  className="btn-ghost btn-link"
-                >
-                  E-Mail schreiben
                 </a>
               </div>
             </div>

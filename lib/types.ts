@@ -67,6 +67,7 @@ export interface Booking {
   handover?: string | null;
   note: string | null;
   status: BookingStatus;
+  archived_at: string | null;
   created_at: string;
   vehicles?: Pick<Vehicle, "name"> | null;
   profiles?: Pick<Profile, "name" | "email" | "phone"> | null;
@@ -282,4 +283,71 @@ export function formatDate(iso: string): string {
     month: "2-digit",
     year: "numeric",
   });
+}
+
+/* ---------- Anfragen: Arten, Status und Archiv ---------- */
+
+/** Kuerzel, unter dem die API die jeweilige Anfragetabelle anspricht. */
+export type RequestKind = "buchung" | "kauf" | "abo" | "wunsch" | "togg" | "verkauf";
+
+export const REQUEST_STATUSES: Record<RequestKind, string[]> = {
+  buchung: ["neu", "bestätigt", "abgelehnt", "beendet"],
+  kauf: ["neu", "in_bearbeitung", "bestätigt", "abgelehnt", "erledigt"],
+  abo: ["neu", "in_bearbeitung", "bestätigt", "abgelehnt", "erledigt"],
+  wunsch: ["neu", "in_bearbeitung", "bestätigt", "abgelehnt", "erledigt"],
+  togg: ["neu", "kontaktiert", "bestätigt", "abgelehnt", "erledigt"],
+  verkauf: ["neu", "in_bearbeitung", "bestätigt", "abgelehnt", "erledigt"],
+};
+
+export const STATUS_LABEL: Record<string, string> = {
+  neu: "neu",
+  in_bearbeitung: "in Bearbeitung",
+  kontaktiert: "kontaktiert",
+  bestätigt: "bestätigt",
+  abgelehnt: "abgesagt",
+  beendet: "beendet",
+  erledigt: "erledigt",
+};
+
+/* ---------- Fahrzeuge, die Kunden selbst verkaufen wollen ---------- */
+
+export type SellVehicleType = "pkw" | "transporter";
+export type SellLocationType = "besichtigung" | "abholung";
+
+export const SELL_CONDITIONS = [
+  "sehr gut",
+  "gut",
+  "gebraucht mit Gebrauchsspuren",
+  "reparaturbedürftig",
+] as const;
+
+export interface SellOffer {
+  id: string;
+  user_id: string;
+  vehicle_type: SellVehicleType;
+  brand: string;
+  model: string;
+  build_year: number | null;
+  mileage_km: number | null;
+  condition: string | null;
+  power: string | null;
+  fuel: string | null;
+  transmission: string | null;
+  hu_until: string | null;
+  location: string | null;
+  location_type: SellLocationType;
+  price_expectation: number | null;
+  note: string | null;
+  photo_urls: string[];
+  status: string;
+  archived_at: string | null;
+  created_at: string;
+  profiles?: Pick<
+    Profile,
+    "name" | "email" | "phone" | "company_name"
+  > | null;
+}
+
+export function sellTitle(o: SellOffer): string {
+  return [o.brand, o.model].filter(Boolean).join(" ");
 }
