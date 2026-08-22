@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { formatDate, formatEuro, formatKm, type Booking } from "@/lib/types";
+import {
+  aboOfferSummary,
+  formatDate,
+  formatEuro,
+  formatKm,
+  type AboInterest,
+  type Booking,
+} from "@/lib/types";
 import RequestStatusSelect from "@/components/admin/RequestStatusSelect";
 import ArchiveButton from "@/components/admin/ArchiveButton";
 import PublishOfferButton from "@/components/admin/PublishOfferButton";
@@ -80,6 +87,11 @@ interface SellOfferRow {
   price_expectation: number | null;
   note: string | null;
   photo_urls: string[];
+  abo_interest: AboInterest;
+  abo_terms: number[];
+  abo_price_net: number | null;
+  abo_km: string | null;
+  abo_deductible: string | null;
   sale_vehicle_id: string | null;
   status: string;
   archived_at: string | null;
@@ -329,6 +341,7 @@ export default async function AdminRequestsPage({
                 <th>Fahrzeug</th>
                 <th>Eckdaten</th>
                 <th>Ort</th>
+                <th>Abo möglich</th>
                 <th>Anmerkung</th>
                 <th>Fotos</th>
                 <th>Status</th>
@@ -378,6 +391,13 @@ export default async function AdminRequestsPage({
                           : "Besichtigung"}
                       </span>
                     </div>
+                  </td>
+                  <td data-label="Abo möglich" className="note-cell">
+                    {o.abo_interest === "nein" ? (
+                      <span className="muted">nein</span>
+                    ) : (
+                      aboOfferSummary(o)
+                    )}
                   </td>
                   <td data-label="Anmerkung" className="note-cell">
                     {o.note ?? "–"}

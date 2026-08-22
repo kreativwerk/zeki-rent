@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import ImageUpload from "@/components/admin/ImageUpload";
-import { SELL_CONDITIONS } from "@/lib/types";
+import { SELL_ABO_TERMS, SELL_CONDITIONS } from "@/lib/types";
 
 const FUELS = ["Diesel", "Benzin", "Elektro", "Hybrid", "LPG/CNG"];
 const GEARBOXES = ["Schaltgetriebe", "Automatik"];
@@ -49,6 +49,11 @@ export default function SellOfferForm({ userId }: { userId: string }) {
   const [location, setLocation] = useState("");
   const [price, setPrice] = useState("");
   const [note, setNote] = useState("");
+  const [aboInterest, setAboInterest] = useState("nein");
+  const [aboTerms, setAboTerms] = useState<number[]>([]);
+  const [aboPrice, setAboPrice] = useState("");
+  const [aboKm, setAboKm] = useState("");
+  const [aboDeductible, setAboDeductible] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,6 +94,15 @@ export default function SellOfferForm({ userId }: { userId: string }) {
         location: location.trim(),
         price_expectation: price ? Number(price.replace(/\D/g, "")) : null,
         note: note.trim() || null,
+        abo_interest: aboInterest,
+        abo_terms: aboInterest === "nein" ? [] : aboTerms,
+        abo_price_net:
+          aboInterest !== "nein" && aboPrice
+            ? Number(aboPrice.replace(/\D/g, ""))
+            : null,
+        abo_km: aboInterest !== "nein" ? aboKm.trim() || null : null,
+        abo_deductible:
+          aboInterest !== "nein" ? aboDeductible.trim() || null : null,
         photo_urls: photos,
       }),
     }).catch(() => null);
@@ -303,6 +317,98 @@ export default function SellOfferForm({ userId }: { userId: string }) {
           placeholder="18500"
         />
       </div>
+
+      <div className="field">
+        <span className="field-label">
+          Würden Sie das Fahrzeug auch im Abo vermieten?
+        </span>
+        <PillChoice
+          value={aboInterest}
+          onChange={setAboInterest}
+          options={[
+            { value: "nein", label: "Nein" },
+            { value: "ja", label: "Ja" },
+            { value: "verhandelbar", label: "Verhandelbar" },
+          ]}
+        />
+        <p className="hint-block">
+          Beim Abo bleibt das Fahrzeug Ihres, wir vermieten es monatsweise
+          weiter. Alle Angaben hier sind unverbindlich, den Rest besprechen wir
+          persönlich.
+        </p>
+      </div>
+
+      {aboInterest !== "nein" && (
+        <>
+          <div className="field">
+            <span className="field-label">
+              Mögliche Laufzeiten <span className="hint">Mehrfachauswahl</span>
+            </span>
+            <div className="choice-pills">
+              {SELL_ABO_TERMS.map((m) => {
+                const on = aboTerms.includes(m);
+                return (
+                  <button
+                    key={m}
+                    type="button"
+                    className={on ? "pill pill-active" : "pill"}
+                    aria-pressed={on}
+                    onClick={() =>
+                      setAboTerms((t) =>
+                        on ? t.filter((x) => x !== m) : [...t, m].sort((a, b) => a - b),
+                      )
+                    }
+                  >
+                    {m} Monate
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="field">
+            <label className="field-label" htmlFor="s-abo-price">
+              Preisvorstellung netto pro Monat{" "}
+              <span className="hint">30 Tage, inklusive Versicherung</span>
+            </label>
+            <input
+              id="s-abo-price"
+              type="text"
+              inputMode="numeric"
+              value={aboPrice}
+              onChange={(e) => setAboPrice(e.target.value)}
+              placeholder="890"
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="field">
+              <label className="field-label" htmlFor="s-abo-km">
+                Inklusivkilometer <span className="hint">pro Monat</span>
+              </label>
+              <input
+                id="s-abo-km"
+                type="text"
+                value={aboKm}
+                onChange={(e) => setAboKm(e.target.value)}
+                placeholder="z. B. 2.000 km"
+              />
+            </div>
+            <div className="field">
+              <label className="field-label" htmlFor="s-abo-sb">
+                Selbstbeteiligung
+              </label>
+              <input
+                id="s-abo-sb"
+                type="text"
+                value={aboDeductible}
+                onChange={(e) => setAboDeductible(e.target.value)}
+                placeholder="z. B. 1.000 € oder verhandelbar"
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="field">
         <span className="field-label">

@@ -340,6 +340,11 @@ export interface SellOffer {
   price_expectation: number | null;
   note: string | null;
   photo_urls: string[];
+  abo_interest: AboInterest;
+  abo_terms: number[];
+  abo_price_net: number | null;
+  abo_km: string | null;
+  abo_deductible: string | null;
   status: string;
   archived_at: string | null;
   created_at: string;
@@ -347,6 +352,33 @@ export interface SellOffer {
     Profile,
     "name" | "email" | "phone" | "company_name"
   > | null;
+}
+
+/** Wuerde die anbietende Person das Fahrzeug auch im Abo vermieten? */
+export type AboInterest = "nein" | "ja" | "verhandelbar";
+
+/** Laufzeiten, die beim Abo-Angebot zur Wahl stehen. */
+export const SELL_ABO_TERMS = [3, 6, 12] as const;
+
+/** Kurzfassung des Abo-Angebots fuer Tabellen und E-Mails. */
+export function aboOfferSummary(o: {
+  abo_interest: AboInterest;
+  abo_terms: number[];
+  abo_price_net: number | null;
+  abo_km: string | null;
+  abo_deductible: string | null;
+}): string {
+  if (o.abo_interest === "nein") return "nein";
+  const parts: string[] = [
+    o.abo_interest === "verhandelbar" ? "verhandelbar" : "ja",
+  ];
+  if (o.abo_terms.length > 0) parts.push(`${o.abo_terms.join(", ")} Monate`);
+  if (o.abo_price_net !== null) {
+    parts.push(`${formatEuro(o.abo_price_net)} netto/Monat`);
+  }
+  if (o.abo_km) parts.push(o.abo_km);
+  if (o.abo_deductible) parts.push(`SB ${o.abo_deductible}`);
+  return parts.join(" · ");
 }
 
 export function sellTitle(o: SellOffer): string {

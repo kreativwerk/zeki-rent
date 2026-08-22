@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { emailLayout, notifyOwner, sendEmail } from "@/lib/email";
-import { formatEuro, formatKm } from "@/lib/types";
+import {
+  aboOfferSummary,
+  formatEuro,
+  formatKm,
+  type AboInterest,
+} from "@/lib/types";
 
 const VEHICLE_TYPES = ["pkw", "transporter"];
 const LOCATION_TYPES = ["besichtigung", "abholung"];
+const ABO_INTEREST = ["nein", "ja", "verhandelbar"];
 
 function toInt(value: unknown): number | null {
   const n = Number(value);
@@ -65,6 +71,23 @@ export async function POST(request: Request) {
   const huUntil = body.hu_until ? String(body.hu_until).slice(0, 20) : null;
   const note = body.note ? String(body.note).slice(0, 2000) : null;
 
+  // Abo-Angebot: nur uebernehmen, wenn die Person es anbietet
+  const aboInterest = ABO_INTEREST.includes(String(body.abo_interest))
+    ? String(body.abo_interest)
+    : "nein";
+  const wantsAbo = aboInterest !== "nein";
+  const aboTerms = wantsAbo && Array.isArray(body.abo_terms)
+    ? body.abo_terms
+        .map((t) => toInt(t))
+        .filter((t): t is number => t !== null && [3, 6, 12].includes(t))
+    : [];
+  const aboPrice = wantsAbo ? toInt(body.abo_price_net) : null;
+  const aboKm = wantsAbo && body.abo_km ? String(body.abo_km).slice(0, 60) : null;
+  const aboDeductible =
+    wantsAbo && body.abo_deductible
+      ? String(body.abo_deductible).slice(0, 60)
+      : null;
+
   const { error } = await supabase.from("sell_offers").insert({
     user_id: user.id,
     vehicle_type: vehicleType,
@@ -81,6 +104,11 @@ export async function POST(request: Request) {
     location_type: locationType,
     price_expectation: priceWish,
     note,
+    abo_interest: aboInterest,
+    abo_terms: aboTerms,
+    abo_price_net: aboPrice,
+    abo_km: aboKm,
+    abo_deductible: aboDeductible,
     photo_urls: photos,
   });
 
@@ -105,6 +133,16 @@ export async function POST(request: Request) {
     location,
   ]);
   if (priceWish !== null) rows.push(["Preisvorstellung", formatEuro(priceWish)]);
+  rows.push([
+    "Auch im Abo vermieten",
+    aboOfferSummary({
+      abo_interest: aboInterest as AboInterest,
+      abo_terms: aboTerms,
+      abo_price_net: aboPrice,
+      abo_km: aboKm,
+      abo_deductible: aboDeductible,
+    }),
+  ]);
   if (note) rows.push(["Anmerkungen", note]);
   rows.push(["Fotos", photos.length ? `${photos.length} hochgeladen` : "keine"]);
 

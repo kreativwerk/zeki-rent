@@ -4437,3 +4437,11 @@ a.fleet-tile:hover {
 .dash-tile .dash-label {
   margin-top: auto;
 }
+
+/* Erklaerender Satz unter einer Auswahl */
+.hint-block {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
