@@ -37,7 +37,7 @@ export default async function SellPage() {
           <ul className="spec-list">
             <li>Ankauf und Vermittlung von Pkw und Transportern</li>
             <li>Bewertung durch uns, keine automatische Schätzung</li>
-            <li>Abholung möglich, Abmeldung übernehmen wir</li>
+            <li>Abholung nach Absprache möglich</li>
             <li>
               Ihre Kontaktdaten bleiben bei uns und werden nicht veröffentlicht
             </li>

@@ -47,6 +47,14 @@ export async function POST(request: Request) {
     ? offer.photo_urls
     : [];
 
+  // Verkauft eine Privatperson, kann keine Mehrwertsteuer ausgewiesen werden
+  const { data: seller } = await supabase
+    .from("profiles")
+    .select("customer_type")
+    .eq("id", offer.user_id)
+    .maybeSingle();
+  const vatNote = seller?.customer_type === "privat" ? "privat" : null;
+
   // Ort und Anmerkung des Anbieters als Startpunkt fuer die Beschreibung
   const descriptionParts = [
     offer.note,
@@ -70,6 +78,7 @@ export async function POST(request: Request) {
       description: descriptionParts.join("\n\n") || null,
       price: null,
       price_on_request: true,
+      vat_note: vatNote,
       photo_url: photos[0] ?? null,
       photo_urls: photos,
       active: false,

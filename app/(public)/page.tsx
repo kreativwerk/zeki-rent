@@ -302,12 +302,6 @@ export default async function Home() {
               <TileSlider slides={ABO_SLIDES} />
             </div>
             <div className="abo-split-copy">
-              <ul className="term-chips">
-                <li>6 Monate</li>
-                <li>12 Monate</li>
-                <li>18 Monate</li>
-                <li>24 Monate</li>
-              </ul>
               <p>
                 Vom Kleinwagen bis zum Elektro-Transporter. Sie wählen Modell,
                 Laufzeit und Kilometer, wir machen Ihnen ein Angebot.
@@ -356,7 +350,7 @@ export default async function Home() {
               <ul className="trade-points">
                 <li>Bewertung innerhalb eines Werktags</li>
                 <li>Abholung möglich, auch bei ganzen Flotten</li>
-                <li>Abmeldung übernehmen wir</li>
+                <li>Faire Einschätzung, kein Druck</li>
               </ul>
               <div className="trade-actions">
                 <Link href="/verkaufen" className="btn-invert btn-link">

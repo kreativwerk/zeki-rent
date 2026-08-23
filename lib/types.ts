@@ -161,7 +161,7 @@ export interface SaleVehicle {
   description: string | null;
   price: number | null;
   price_on_request: boolean;
-  /** null, 'ausweisbar' oder 'differenzbesteuert' */
+  /** null, 'ausweisbar', 'differenzbesteuert' oder 'privat' */
   vat_note: string | null;
   photo_url: string | null;
   photo_urls: string[];
@@ -182,6 +182,7 @@ export function formatKm(km: number | null): string | null {
 export const VAT_LABEL: Record<string, string> = {
   ausweisbar: "MwSt. ausweisbar",
   differenzbesteuert: "Differenzbesteuert nach § 25a UStG, MwSt. nicht ausweisbar",
+  privat: "Privatverkauf von privat, MwSt. nicht ausweisbar",
 };
 
 export type CustomerType = "privat" | "gewerblich";

@@ -58,7 +58,7 @@ export default function SaleVehicleForm({ vehicle }: { vehicle?: SaleVehicle }) 
     }
     if (f.active && !f.price_on_request && !f.vat_note) {
       setError(
-        "Bitte angeben, ob die MwSt. ausweisbar ist oder das Fahrzeug differenzbesteuert verkauft wird. Das ist bei sichtbaren Preisen Pflicht."
+        "Bitte angeben, wie das Fahrzeug versteuert wird: MwSt. ausweisbar, differenzbesteuert oder Privatverkauf. Das ist bei sichtbaren Preisen Pflicht."
       );
       return;
     }
@@ -344,12 +344,14 @@ export default function SaleVehicleForm({ vehicle }: { vehicle?: SaleVehicle }) 
             <option value="differenzbesteuert">
               Differenzbesteuert (§ 25a UStG)
             </option>
+            <option value="privat">Privatverkauf, keine MwSt.</option>
           </select>
         </div>
       </div>
       <p className="fine-print">
-        Bei sichtbarem Preis ist die Angabe Pflicht. Der Preis erscheint als
-        Endpreis inklusive Mehrwertsteuer.
+        Bei sichtbarem Preis ist die Angabe Pflicht. Der Preis erscheint immer
+        als Endpreis. „Privatverkauf“ und „differenzbesteuert“ bedeuten, dass
+        keine Mehrwertsteuer ausgewiesen werden kann.
       </p>
 
       <div className="field">
