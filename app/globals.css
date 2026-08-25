@@ -4240,19 +4240,59 @@ a.fleet-tile:hover {
 
 /* Weitere Fahrzeugfotos unter dem Hauptbild */
 .sale-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin: 1rem 0 1.5rem;
 }
 
-.sale-gallery img {
+/* Hauptbild: feste Hoehe, damit beim Wechseln nichts springt.
+   contain statt cover, sonst wird das Fahrzeug angeschnitten. */
+.sale-gallery-main img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border-radius: 1rem;
+  background: var(--fill);
+}
+
+.sale-gallery-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.sale-thumb {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+  border-radius: 0.625rem;
+}
+
+.sale-thumb img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 0.75rem;
+  border-radius: 0.625rem;
   border: 1px solid var(--separator);
   background: var(--fill);
+  transition: opacity 120ms ease-out;
+}
+
+.sale-thumb:hover img {
+  opacity: 0.85;
+}
+
+/* Das gerade gezeigte Bild ist deutlich markiert */
+.sale-thumb-on img {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.sale-thumb:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 /* Auswahl des Hauptfotos im Adminformular */

@@ -9,6 +9,7 @@ import {
   type SaleVehicle,
 } from "@/lib/types";
 import SaleRequestForm from "@/components/SaleRequestForm";
+import SaleGallery from "@/components/SaleGallery";
 import CompanyGate from "@/components/CompanyGate";
 import { isCompanyComplete, type CompanyData } from "@/lib/company";
 
@@ -57,9 +58,9 @@ export default async function SaleVehiclePage(props: {
     console.error("Profil konnte nicht geladen werden:", err);
   }
 
-  // Hauptfoto steht schon oben, hier nur die weiteren Bilder
-  const gallery = (vehicle.photo_urls ?? []).filter(
-    (u) => u && u !== vehicle!.photo_url,
+  // Hauptfoto zuerst, danach die weiteren Bilder ohne Dopplung
+  const gallery = [vehicle.photo_url, ...(vehicle.photo_urls ?? [])].filter(
+    (u, i, all): u is string => Boolean(u) && all.indexOf(u) === i,
   );
 
   const rows = [
@@ -96,28 +97,7 @@ export default async function SaleVehiclePage(props: {
           </span>
           <h1>{saleTitle(vehicle)}</h1>
 
-          {vehicle.photo_url && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={vehicle.photo_url}
-              alt={saleTitle(vehicle)}
-              style={{ width: "100%", borderRadius: "1rem", margin: "1rem 0" }}
-            />
-          )}
-
-          {gallery.length > 0 && (
-            <div className="sale-gallery">
-              {gallery.map((url, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={url}
-                  src={url}
-                  alt={`${saleTitle(vehicle)}, Foto ${i + 2}`}
-                  loading="lazy"
-                />
-              ))}
-            </div>
-          )}
+          <SaleGallery photos={gallery} alt={saleTitle(vehicle)} />
 
           {vehicle.description && (
             <p className="vehicle-notes">{vehicle.description}</p>
