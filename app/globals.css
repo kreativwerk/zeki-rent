@@ -73,35 +73,39 @@ body {
 
 /* Startdatum-Hinweis ueber der Navigation, scrollt mit weg */
 .launch-note {
-  background: var(--accent-tint);
-  border-bottom: 1px solid var(--separator);
-  color: var(--text);
+  background: var(--accent-deep);
+  color: #fff;
 }
 
 .launch-note-inner {
   max-width: 72rem;
   margin: 0 auto;
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1rem;
   display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  font-size: 0.8125rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
   line-height: 1.45;
+  text-align: center;
   text-wrap: pretty;
 }
 
-.launch-note-dot {
+.launch-note-badge {
   flex: none;
-  width: 0.5rem;
-  height: 0.5rem;
-  margin-top: 0.34rem;
-  border-radius: 50%;
-  background: var(--accent);
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--accent-deep);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .launch-note strong {
-  font-weight: 650;
-  color: var(--accent-deep);
+  font-weight: 700;
+  color: #fff;
 }
 
 /* Translucent chrome — content scrolls underneath */
