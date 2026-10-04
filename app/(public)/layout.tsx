@@ -9,10 +9,11 @@ export default function PublicLayout({
     <>
       <div className="launch-note">
         <p className="launch-note-inner">
-          <span className="launch-note-dot" aria-hidden />
+          <span className="launch-note-badge">Im Aufbau</span>
           <span>
-            Website noch im Aufbau, Start am <strong>1. Oktober 2026</strong>{" "}
-            – Registrierung und Anfragen sind schon jetzt möglich.
+            Diese Website befindet sich noch in Konstruktion. Offizieller Start
+            am <strong>1. November 2026</strong> – Registrierung und Anfragen
+            sind schon jetzt möglich.
           </span>
         </p>
       </div>
