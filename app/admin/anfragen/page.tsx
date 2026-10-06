@@ -51,6 +51,12 @@ interface SaleRequest {
     model: string;
     variant: string | null;
     condition: string;
+    is_partner?: boolean;
+    partner_vehicles?: {
+      source_url: string | null;
+      source_price: number | null;
+      source_location: string | null;
+    } | null;
   } | null;
   profiles?: CustomerRef | null;
 }
@@ -180,7 +186,7 @@ export default async function AdminRequestsPage({
     supabase
       .from("sale_requests")
       .select(
-        `*, sale_vehicles(brand, model, variant, condition), ${CONTACT_FIELDS}`,
+        `*, sale_vehicles(brand, model, variant, condition, is_partner, partner_vehicles(source_url, source_price, source_location)), ${CONTACT_FIELDS}`,
       )
       .order("created_at", { ascending: false }),
     supabase
@@ -492,6 +498,27 @@ export default async function AdminRequestsPage({
                           ? "Neuwagen"
                           : "Gebrauchtwagen"}
                       </span>
+                      {r.sale_vehicles?.partner_vehicles && (
+                        <span className="muted">
+                          Partnerfahrzeug
+                          {r.sale_vehicles.partner_vehicles.source_price != null &&
+                            ` · Einkauf ${formatEuro(Number(r.sale_vehicles.partner_vehicles.source_price))}`}
+                          {r.sale_vehicles.partner_vehicles.source_location &&
+                            ` · ${r.sale_vehicles.partner_vehicles.source_location}`}
+                          {r.sale_vehicles.partner_vehicles.source_url && (
+                            <>
+                              {" · "}
+                              <a
+                                href={r.sale_vehicles.partner_vehicles.source_url}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Original
+                              </a>
+                            </>
+                          )}
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td data-label="Wünsche" className="muted">

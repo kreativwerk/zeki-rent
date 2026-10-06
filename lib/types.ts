@@ -168,6 +168,36 @@ export interface SaleVehicle {
   active: boolean;
   sort_order: number;
   created_at: string;
+  /** Vom Partner-Abgleich uebernommen (Herkunft steht nur in partner_vehicles) */
+  is_partner?: boolean;
+  /** z. B. Tageszulassung, Vorführfahrzeug */
+  source_status?: string | null;
+  body_type?: string | null;
+  listed?: boolean;
+  hidden?: boolean;
+}
+
+/** Nur fuer Admins lesbar */
+export interface PartnerSource {
+  sale_vehicle_id: string;
+  feed: string;
+  external_id: string;
+  source_url: string | null;
+  source_price: number | null;
+  source_location: string | null;
+}
+
+export interface PartnerFeed {
+  id: string;
+  name: string;
+  enabled: boolean;
+  markup_net: number;
+  vat_rate: number;
+  only_commercial: boolean;
+  last_run_at: string | null;
+  last_status: string | null;
+  last_count: number | null;
+  last_error: string | null;
 }
 
 export function saleTitle(v: SaleVehicle): string {

@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
   const { data: vehicle } = await supabase
     .from("sale_vehicles")
-    .select("brand, model, variant, condition, active")
+    .select("brand, model, variant, condition, active, is_partner")
     .eq("id", body.sale_vehicle_id)
     .maybeSingle();
 
@@ -103,6 +103,11 @@ export async function POST(request: Request) {
     });
   }
 
+  // Herkunft nur fuer uns: Einkauf und Original stehen im Admin
+  const partnerNote = vehicle.is_partner
+    ? `<p style="font-size:14px;"><strong>Partnerfahrzeug</strong> – Einkaufspreis und Originalangebot unter Admin → Anfragen.</p>`
+    : "";
+
   await notifyOwner(
     "Neue Kaufanfrage",
     emailLayout(
@@ -110,6 +115,7 @@ export async function POST(request: Request) {
       `<p style="font-size:14px;"><strong>${profile?.company_name ?? ""}</strong><br>
         ${profile?.name ?? ""}<br>
         ${customerEmail ?? ""}${profile?.phone ? `<br>${profile.phone}` : ""}</p>
+       ${partnerNote}
        ${details}`
     )
   );

@@ -92,7 +92,12 @@ export default async function SaleVehiclePage(props: {
       <div className="vehicle-detail">
         <div>
           <span className="vehicle-category">
-            {vehicle.condition === "neu" ? "Neuwagen" : "Gebrauchtwagen"}
+            {vehicle.condition === "neu"
+              ? "Neuwagen"
+              : vehicle.source_status &&
+                  vehicle.source_status !== "Gebrauchtfahrzeug"
+                ? vehicle.source_status
+                : "Gebrauchtwagen"}
             {!vehicle.active && " · Entwurf, nur für Admins sichtbar"}
           </span>
           <h1>{saleTitle(vehicle)}</h1>

@@ -7,6 +7,7 @@ export default async function AdminSalePage() {
   const { data } = await supabase
     .from("sale_vehicles")
     .select("*")
+    .eq("is_partner", false)
     .order("sort_order")
     .order("created_at", { ascending: false });
 
@@ -81,9 +82,14 @@ export default async function AdminSalePage() {
     <>
       <div className="admin-page-header">
         <h1>Verkauf</h1>
-        <Link href="/admin/verkauf/neu" className="btn-primary btn-link">
-          + Fahrzeug anlegen
-        </Link>
+        <div className="abo-contact">
+          <Link href="/admin/partner" className="btn-secondary btn-link">
+            Partnerfahrzeuge
+          </Link>
+          <Link href="/admin/verkauf/neu" className="btn-primary btn-link">
+            + Fahrzeug anlegen
+          </Link>
+        </div>
       </div>
 
       <h2 className="admin-section-title">
