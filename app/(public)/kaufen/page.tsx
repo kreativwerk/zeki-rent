@@ -17,6 +17,7 @@ export const metadata = {
 
 function Card({ v }: { v: SaleVehicle }) {
   const specs = [
+    v.source_status !== "Gebrauchtfahrzeug" && v.source_status,
     v.first_registration && `EZ ${v.first_registration}`,
     formatKm(v.mileage_km),
     v.power,
@@ -28,7 +29,7 @@ function Card({ v }: { v: SaleVehicle }) {
     <Link href={`/kaufen/${v.id}`} className="model-card">
       {v.photo_url && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={v.photo_url} alt={saleTitle(v)} />
+        <img src={v.photo_url} alt={saleTitle(v)} loading="lazy" />
       )}
       <div className="model-card-body">
         <h4>{saleTitle(v)}</h4>
